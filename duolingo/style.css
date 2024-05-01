@@ -28,21 +28,6 @@ button {
 	padding: 7px;
 	margin: 7px;
 }
-.anstop button {
-	max-height: 200px;
-}
-.ansbot button {
-	max-height: 200px;
-}
-.optsbox {
-	overflow-wrap: break-word;
-	white-space: normal;
-}
-.keyboard {
-	display: flex;
-	overflow: hide;
-	max-width: 50px;
-}
 .txtentry {
 	margin: 7px;
 	padding: 7px;
@@ -57,4 +42,9 @@ progressbar > trough {
 progressbar > text {
 	color: #fafaaa;
 	font-size: 20px;
+}
+.keyboard {
+	margin: 7px;
+	margin-bottom: -5px;
+	padding: 7px;
 }
