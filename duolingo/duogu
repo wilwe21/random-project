@@ -33,6 +33,22 @@ class MainWindow(Gtk.ApplicationWindow):
             self.streak.set_css_classes(["streak","gstreak"])
         self.tbox.set_center_widget(self.title)
         self.tbox.set_end_widget(self.lives)
+        self.lvlprog = Gtk.ProgressBar()
+        self.lvlprog.set_show_text(True)
+        self.lvlprog.set_fraction(exp/(((lvl+1)*4)*(lvl+3)))
+        self.exppl(check=True)
+        self.lvlbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True)
+        self.mainbox.append(self.lvlbox)
+        self.lvllebbox = Gtk.CenterBox()
+        self.lvlbox.append(self.lvllebbox)
+        self.lvlleb = Gtk.Label(label=f"{lvl} lvl")
+        self.lvlpoinleb = Gtk.Label(label=f"{exp}/{((lvl+1)*4)*(lvl+3)}")
+        self.lvllebbox.set_start_widget(self.lvlleb)
+        self.lvllebbox.set_end_widget(self.lvlpoinleb)
+        self.lvlbox.append(self.lvlprog)
+        if lvlup:
+            self.lvlleb.set_label(f"{lvl} lvl 🠝")
+            self.lvlleb.add_css_class("up")
         self.bbox = Gtk.Box(hexpand=True)
         self.mainbox.append(self.bbox)
         self.playbut = Gtk.Button(label="Play", hexpand=True)
@@ -44,6 +60,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.bbox.append(self.playbut)
         self.bbox.append(self.options)
         self.bbox.append(self.exitb)
+    def setprog(self, *args, **kwargs):
+        self.lvlprog.set_fraction(exp/(((lvl+1)*4)*(lvl+3)))
     def opt(self, *args, **kwargs):
         self.optbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,vexpand=True)
         self.set_child(self.optbox)
@@ -60,7 +78,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.streak.set_css_classes(["streak","gstreak"])
         self.tbox.set_center_widget(self.title)
         self.tbox.set_end_widget(self.lives)
-        self.opts = Gtk.Box(hexpand=True)
+        self.opts = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,hexpand=True)
         self.opts.set_css_classes(['optsbox'])
         self.optbox.append(self.opts)
         self.reststreak = Gtk.Button(label='Reset Streak',hexpand=True)
@@ -77,18 +95,22 @@ class MainWindow(Gtk.ApplicationWindow):
         self.sound.connect('clicked', self.ssw)
         self.back = Gtk.Button(label='Back',hexpand=True)
         self.back.connect('clicked', self.menu)
-        self.opts.append(self.reststreak)
-        self.opts.append(self.showkeyboard)
-        self.opts.append(self.setllen)
-        self.opts.append(self.hardmode)
-        self.opts.append(self.sound)
-        self.opts.append(self.back)
+        self.tttop = Gtk.Box()
+        self.opts.append(self.tttop)
+        self.bbbot = Gtk.Box()
+        self.opts.append(self.bbbot)
+        self.tttop.append(self.reststreak)
+        self.tttop.append(self.showkeyboard)
+        self.tttop.append(self.setllen)
+        self.bbbot.append(self.hardmode)
+        self.bbbot.append(self.sound)
+        self.bbbot.append(self.back)
     def ssw(self, *args, **kwargs):
-        global sound
+        global sound, conf
         if sound:
             sound = False
             self.title.set_label("Sounds Off")
-            conf.update({'sound': True})
+            conf.update({'sound': False})
             with open(path, "w") as f:
                 yaml.dump(conf,f, allow_unicode=True, sort_keys=False)
         else:
@@ -98,7 +120,7 @@ class MainWindow(Gtk.ApplicationWindow):
             with open(path, "w") as f:
                 yaml.dump(conf,f, allow_unicode=True, sort_keys=False)
     def hmode(self, *args, **kwargs):
-        global hard
+        global hard, conf
         if hard:
             hard = False
             self.title.set_label("Hardmode Off")
@@ -112,7 +134,7 @@ class MainWindow(Gtk.ApplicationWindow):
             with open(path, "w") as f:
                 yaml.dump(conf,f, allow_unicode=True, sort_keys=False)
     def ssl(self, *args, **kwargs):
-        global lessonLength
+        global lessonLength, conf
         count = self.setllen.get_value_as_int()
         lessonLength = count
         conf.update({'length': count})
@@ -329,13 +351,13 @@ class MainWindow(Gtk.ApplicationWindow):
     def checkbut(self, sus, val, *args, **kwargs):
         if wors[val] == wor:
             if mod == 'qchar':
-                exppl(lvl+streak+5)
+                self.exppl(lvl+streak+5)
             if mod == 'qrevchar':
-                exppl(lvl+streak+10)
+                self.exppl(lvl+streak+10)
             if mod == 'qchoice':
-                exppl(lvl+streak+10)
+                self.exppl(lvl+streak+10)
             if mod == 'qrevchoice':
-                exppl(lvl+streak+15)
+                self.exppl(lvl+streak+15)
             self.title.set_label(f"Good {lesson}/{lessonLength}")
             self.title.set_css_classes(['good'])
             self.mword.add_css_class('good')
@@ -345,6 +367,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 else:
                     eval(f"self.w{i+1}").set_sensitive(False)
             self.next.set_visible(True)
+            self.next.grab_focus()
             if sound:
                 playsound('good.mp3')
         else:
@@ -358,8 +381,27 @@ class MainWindow(Gtk.ApplicationWindow):
                 else:
                     eval(f"self.w{i+1}").set_sensitive(False)
             self.next.set_visible(True)
+            self.next.grab_focus()
             if sound:
                 playsound('bad.mp3')
+
+    def exppl(self, count = None, check = False, *args, **kwargs) -> None:
+        global exp, lvl, lvlup
+        lvlup = False
+        if count != None:
+            exp += count
+            conf.update({"exp": exp, "lvl": lvl})
+            with open(path, "w") as f:
+                yaml.dump(conf, f, allow_unicode=True, sort_keys=False)
+        if check:
+            while exp >= ((lvl+1)*4)*(lvl+3):
+                exp -= ((lvl+1)*4)*(lvl+3)
+                lvl += 1
+                lvlup = True
+            conf.update({"exp": exp, "lvl": lvl})
+            self.setprog()
+            with open(path, "w") as f:
+                yaml.dump(conf, f, allow_unicode=True, sort_keys=False)
 
     def showkeys(self, iys = None, menu = None, *args, **kwargs):
         global koks
@@ -418,18 +460,19 @@ class MainWindow(Gtk.ApplicationWindow):
         if menu == 'ppbox':
             if self.txt.get_text() == wor:
                 if mod == 'qchar':
-                    exppl((lvl+streak+5)*2)
+                    self.exppl((lvl+streak+5)*2)
                 if mod == 'qrevchar':
-                    exppl((lvl+streak+10)*2)
+                    self.exppl((lvl+streak+10)*2)
                 if mod == 'qchoice':
-                    exppl((lvl+streak+10)*2)
+                    self.exppl((lvl+streak+10)*2)
                 if mod == 'qrevchoice':
-                    exppl((lvl+streak+15)*2)
+                    self.exppl((lvl+streak+15)*2)
                 self.title.set_label(f"Good {lesson}/{lessonLength}")
                 self.title.set_css_classes(['good'])
                 self.mword.add_css_class('good')
                 self.txt.set_sensitive(False)
                 self.next.set_visible(True)
+                self.next.grab_focus()
                 if sound:
                     playsound('good.mp3')
             else:
@@ -440,14 +483,21 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.txt.set_text(wor)
                 self.txt.set_sensitive(False)
                 self.next.set_visible(True)
+                self.next.grab_focus()
                 if sound:
                     playsound('bad.mp3')
     def kentadd(self, obj, add, *args, **kwargs):
         current_text = self.txt.get_text()
         self.txt.set_text(current_text + add)
+        self.txt.grab_focus()
+        self.txt.select_region(-1,-1)
+        self.txt.set_position(len(current_text)+1)
     def kentback(self, *args, **kwargs):
         current_text = self.txt.get_text()
         self.txt.set_text(current_text[:-1])
+        self.txt.grab_focus()
+        self.txt.select_region(-1,-1)
+        self.txt.set_position(len(current_text)-1)
     def lifedel(self, obj = None, count = None, *args, **kwargs):
         global lives, ldat
         lives -= count
@@ -521,20 +571,11 @@ def livs() -> None:
             livs()
         with open(path, "w") as f:
             yaml.dump(conf,f, allow_unicode=True, sort_keys=False)
-def exppl(count: int = None) -> None:
-    global exp, lvl
-    if count != None:
-        exp += count
-        if exp >= ((lvl+1)*4)**(lvl+3):
-            lvl += 1
-            print(f"Lvl up {lvl}")
-        conf.update({"exp": exp, "lvl": lvl})
-        with open(path, "w") as f:
-            yaml.dump(conf, f, allow_unicode=True, sort_keys=False)
 def main(prof: str = None) -> None:
-    global koks, fire, exp, time, logo, smem, path, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard, sound
+    global koks, lvlup, fire, exp, time, logo, smem, path, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard, sound
     time = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y.%m.%d"), "%Y.%m.%d")
     ftime = datetime.datetime.now()
+    lvlup = False
     first = False
     fire = 'gray'
     if prof == None:

@@ -47,3 +47,14 @@ button {
 	margin: 7px;
 	padding: 7px;
 }
+.up {
+	color: lime;
+}
+progressbar > trough {
+	padding: 7px;
+	margin: 7px;
+}
+progressbar > text {
+	color: #fafaaa;
+	font-size: 20px;
+}
