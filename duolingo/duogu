@@ -16,27 +16,331 @@ class MainWindow(Gtk.ApplicationWindow):
         super().__init__(*args, **kwargs)
         self.menu()
     def menu(self, *args, **kwargs):
+        livs()
         self.mainbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.set_child(self.mainbox)
         self.tbox = Gtk.CenterBox(hexpand=True)
         self.mainbox.append(self.tbox)
-        self.title = Gtk.Label(label=logo)
+        self.title = Gtk.Label(label=logo,wrap=True,justify='center')
         self.lives = Gtk.Label(label=f"{lives}🫀")
+        self.streak = Gtk.Label(label=f"{streak} 󰈸")
         self.lives.set_css_classes(["lifes"])
+        self.tbox.set_start_widget(self.streak)
+        if fire == 'gray':
+            self.streak.set_css_classes(["nostreak","gstreak"])
+        elif fire == 'orange':
+            self.streak.set_css_classes(["streak","gstreak"])
         self.tbox.set_center_widget(self.title)
         self.tbox.set_end_widget(self.lives)
         self.bbox = Gtk.Box(hexpand=True)
         self.mainbox.append(self.bbox)
-        self.play = Gtk.Button(label="Play", hexpand=True)
-        #self.play.connect('clicked', pass)
+        self.playbut = Gtk.Button(label="Play", hexpand=True)
+        self.playbut.connect('clicked', self.initplay)
         self.options = Gtk.Button(label="Options", hexpand=True)
-        #self.options.connect('clicked', pass)
+        self.options.connect('clicked', self.opt)
         self.exitb = Gtk.Button(label="Exit", hexpand=True)
         self.exitb.connect('clicked', self.exit)
-        self.bbox.append(self.play)
+        self.bbox.append(self.playbut)
         self.bbox.append(self.options)
         self.bbox.append(self.exitb)
+    def opt(self, *args, **kwargs):
+        self.optbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,vexpand=True)
+        self.set_child(self.optbox)
+        self.tbox = Gtk.CenterBox(hexpand=True)
+        self.optbox.append(self.tbox)
+        self.title = Gtk.Label(label=logo,wrap=True,justify='center')
+        self.lives = Gtk.Label(label=f"{lives}🫀")
+        self.streak = Gtk.Label(label=f"{streak} 󰈸")
+        self.lives.set_css_classes(["lifes"])
+        self.tbox.set_start_widget(self.streak)
+        if fire == 'gray':
+            self.streak.set_css_classes(["nostreak","gstreak"])
+        elif fire == 'orange':
+            self.streak.set_css_classes(["streak","gstreak"])
+        self.tbox.set_center_widget(self.title)
+        self.tbox.set_end_widget(self.lives)
+        self.opts = Gtk.Box(hexpand=True)
+        self.opts.set_css_classes(['optsbox'])
+        self.optbox.append(self.opts)
+        self.reststreak = Gtk.Button(label='Reset Streak',hexpand=True)
+        self.showkeyboard = Gtk.Button(label='Show Keyboard',hexpand=True)
+        self.showkeyboard.connect('clicked', self.showkeys, "optbox")
+        self.back = Gtk.Button(label='Back',hexpand=True)
+        self.back.connect('clicked', self.menu)
+        self.opts.append(self.reststreak)
+        self.opts.append(self.showkeyboard)
+        self.opts.append(self.back)
+    def initplay(self, *args, **kwargs):
+        global lesson
+        lesson = 0
+        self.play()
+    def play(self, *args, **kwargs):
+        global lesson
+        if lesson < lessonLength:
+            lesson +=1
+            self.exbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            self.set_child(self.exbox)
+            self.tbox = Gtk.CenterBox(hexpand=True)
+            self.exbox.append(self.tbox)
+            self.title = Gtk.Label(label=f"Exercise {lesson}/{lessonLength}",wrap=True,justify='center')
+            self.lives = Gtk.Label(label=f"{lives}🫀")
+            self.streak = Gtk.Label(label=f"{streak} 󰈸")
+            self.lives.set_css_classes(["lifes"])
+            self.tbox.set_start_widget(self.streak)
+            if fire == 'gray':
+                self.streak.set_css_classes(["nostreak","gstreak"])
+            elif fire == 'orange':
+                self.streak.set_css_classes(["streak","gstreak"])
+            self.tbox.set_center_widget(self.title)
+            self.tbox.set_end_widget(self.lives)
+            self.ppbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,hexpand=True,vexpand=True)
+            self.exbox.append(self.ppbox)
+            modes = ["qchoice","qrevchoice","qchar","qrevchar"]
+            mod = random.choice(modes)
+            eval(f"self.{mod}()")
+        elif lesson == lessonLength:
+            self.menu()
 
+    def qchoice(self, *args, **kwargs) -> None:
+        global wors, wor
+        wor = w.word()
+        self.mword = Gtk.Label(label=translate(wor))
+        self.mword.set_css_classes(['word'])
+        self.ppbox.append(self.mword)
+        wors = w.random_words(4, word_min_length=len(wor), word_max_length=len(wor))
+        wors[random.randint(0,3)] = wor
+        self.w1 = Gtk.Button(label=wors[0])
+        self.w1.connect('clicked', self.checkbut, 0)
+        self.w2 = Gtk.Button(label=wors[1])
+        self.w2.connect('clicked', self.checkbut, 1)
+        self.w3 = Gtk.Button(label=wors[2])
+        self.w3.connect('clicked', self.checkbut, 2)
+        self.w4 = Gtk.Button(label=wors[3])
+        self.w4.connect('clicked', self.checkbut, 3)
+        self.w1.set_size_request(width=150,height=150)
+        self.w2.set_size_request(width=150,height=150)
+        self.w3.set_size_request(width=150,height=150)
+        self.w4.set_size_request(width=150,height=150)
+        self.toppbox = Gtk.CenterBox()
+        self.botppbox = Gtk.CenterBox()
+        self.botppbox.set_css_classes(['botppbox'])
+        self.ppbox.append(self.toppbox)
+        self.ppbox.append(self.botppbox)
+        self.tpbo = Gtk.Box()
+        self.tpbo.append(self.w1)
+        self.tpbo.append(self.w2)
+        self.toppbox.set_center_widget(self.tpbo)
+        self.btbo = Gtk.Box()
+        self.btbo.append(self.w3)
+        self.btbo.append(self.w4)
+        self.botppbox.set_center_widget(self.btbo)
+        self.next = Gtk.Button(label="next")
+        self.next.set_css_classes(['next'])
+        self.ppbox.append(self.next)
+        self.next.connect('clicked', self.play)
+        self.next.set_visible(False)
+
+    def qrevchoice(self, *args, **kwargs) -> None:
+        global wors, wor
+        wor = w.word()
+        self.mword = Gtk.Label(label=wor)
+        wor = translate(wor)
+        self.mword.set_css_classes(['word'])
+        self.ppbox.append(self.mword)
+        wors = []
+        for i in range(4):
+            wors.append(translate(w.word(word_min_length=len(wor), word_max_length=len(wor))))
+        wors[random.randint(0,3)] = wor
+        self.w1 = Gtk.Button(label=wors[0])
+        self.w1.connect('clicked', self.checkbut, 0)
+        self.w2 = Gtk.Button(label=wors[1])
+        self.w2.connect('clicked', self.checkbut, 1)
+        self.w3 = Gtk.Button(label=wors[2])
+        self.w3.connect('clicked', self.checkbut, 2)
+        self.w4 = Gtk.Button(label=wors[3])
+        self.w4.connect('clicked', self.checkbut, 3)
+        self.w1.set_size_request(width=150,height=150)
+        self.w2.set_size_request(width=150,height=150)
+        self.w3.set_size_request(width=150,height=150)
+        self.w4.set_size_request(width=150,height=150)
+        self.toppbox = Gtk.CenterBox()
+        self.botppbox = Gtk.CenterBox()
+        self.botppbox.set_css_classes(['botppbox'])
+        self.ppbox.append(self.toppbox)
+        self.ppbox.append(self.botppbox)
+        self.tpbo = Gtk.Box()
+        self.tpbo.append(self.w1)
+        self.tpbo.append(self.w2)
+        self.toppbox.set_center_widget(self.tpbo)
+        self.btbo = Gtk.Box()
+        self.btbo.append(self.w3)
+        self.btbo.append(self.w4)
+        self.botppbox.set_center_widget(self.btbo)
+        self.next = Gtk.Button(label="next")
+        self.next.set_css_classes(['next'])
+        self.ppbox.append(self.next)
+        self.next.connect('clicked', self.play)
+        self.next.set_visible(False)
+    def qchar(self, *args, **kwargs) -> None:
+        global wors, wor
+        wor = random.choice(string.ascii_lowercase)
+        wors = [random.choice(string.ascii_lowercase) for i in range(4)]
+        wors[random.randint(0,3)] = wor
+        self.mword = Gtk.Label(label=translate(wor))
+        self.mword.set_css_classes(['word'])
+        self.ppbox.append(self.mword)
+        self.w1 = Gtk.Button(label=wors[0])
+        self.w1.connect('clicked', self.checkbut, 0)
+        self.w2 = Gtk.Button(label=wors[1])
+        self.w2.connect('clicked', self.checkbut, 1)
+        self.w3 = Gtk.Button(label=wors[2])
+        self.w3.connect('clicked', self.checkbut, 2)
+        self.w4 = Gtk.Button(label=wors[3])
+        self.w4.connect('clicked', self.checkbut, 3)
+        self.w1.set_size_request(width=150,height=150)
+        self.w2.set_size_request(width=150,height=150)
+        self.w3.set_size_request(width=150,height=150)
+        self.w4.set_size_request(width=150,height=150)
+        self.toppbox = Gtk.CenterBox()
+        self.botppbox = Gtk.CenterBox()
+        self.botppbox.set_css_classes(['botppbox'])
+        self.ppbox.append(self.toppbox)
+        self.ppbox.append(self.botppbox)
+        self.tpbo = Gtk.Box()
+        self.tpbo.append(self.w1)
+        self.tpbo.append(self.w2)
+        self.toppbox.set_center_widget(self.tpbo)
+        self.btbo = Gtk.Box()
+        self.btbo.append(self.w3)
+        self.btbo.append(self.w4)
+        self.botppbox.set_center_widget(self.btbo)
+        self.next = Gtk.Button(label="next")
+        self.next.set_css_classes(['next'])
+        self.ppbox.append(self.next)
+        self.next.connect('clicked', self.play)
+        self.next.set_visible(False)
+
+    def qrevchar(self, *args, **kwargs) -> None:
+        global wors, wor
+        wor = random.choice(string.ascii_lowercase)
+        wors = []
+        for i in range(4):
+            wors.append(random.choice(string.ascii_lowercase))
+        wors[random.randint(0,3)] = wor
+        self.mword = Gtk.Label(label=translate(wor))
+        self.mword.set_css_classes(['word'])
+        self.ppbox.append(self.mword)
+        self.w1 = Gtk.Button(label=wors[0])
+        self.w1.connect('clicked', self.checkbut, 0)
+        self.w2 = Gtk.Button(label=wors[1])
+        self.w2.connect('clicked', self.checkbut, 1)
+        self.w3 = Gtk.Button(label=wors[2])
+        self.w3.connect('clicked', self.checkbut, 2)
+        self.w4 = Gtk.Button(label=wors[3])
+        self.w4.connect('clicked', self.checkbut, 3)
+        self.w1.set_size_request(width=150,height=150)
+        self.w2.set_size_request(width=150,height=150)
+        self.w3.set_size_request(width=150,height=150)
+        self.w4.set_size_request(width=150,height=150)
+        self.toppbox = Gtk.CenterBox()
+        self.botppbox = Gtk.CenterBox()
+        self.botppbox.set_css_classes(['botppbox'])
+        self.ppbox.append(self.toppbox)
+        self.ppbox.append(self.botppbox)
+        self.tpbo = Gtk.Box()
+        self.tpbo.append(self.w1)
+        self.tpbo.append(self.w2)
+        self.toppbox.set_center_widget(self.tpbo)
+        self.btbo = Gtk.Box()
+        self.btbo.append(self.w3)
+        self.btbo.append(self.w4)
+        self.botppbox.set_center_widget(self.btbo)
+        self.next = Gtk.Button(label="next")
+        self.next.set_css_classes(['next'])
+        self.ppbox.append(self.next)
+        self.next.connect('clicked', self.play)
+        self.next.set_visible(False)
+    def checkbut(self, sus, val, *args, **kwargs):
+        if wors[val] == wor:
+            self.title.set_label("Good")
+            self.title.set_css_classes(['good'])
+            self.mword.add_css_class('good')
+            for i in range(4):
+                if wors[i] != wor:
+                    eval(f"self.w{i+1}").set_visible(False)
+                else:
+                    eval(f"self.w{i+1}").set_sensitive(False)
+            self.next.set_visible(True)
+        else:
+            self.title.set_label("Wrong")
+            self.title.set_css_classes(['wrong'])
+            self.mword.add_css_class('wrong')
+            for i in range(4):
+                if wors[i] != wor:
+                    eval(f"self.w{i+1}").set_visible(False)
+                else:
+                    eval(f"self.w{i+1}").set_sensitive(False)
+            self.next.set_visible(True)
+
+    def showkeys(self, iys = None, menu = None, *args, **kwargs):
+        global koks
+        if not koks:
+            koks = True
+            keys = []
+            values = []
+            for key, value in lern.items():
+                keys.append(key)
+                values.append(value)
+            random.shuffle(keys)
+            shufla = {}
+            for key in keys:
+                shufla[key] = lern[key]
+            k = 0
+            box = 1
+            self.txt = Gtk.Entry()
+            self.txt.set_placeholder_text("Write text here...")
+            self.txt.set_css_classes(['txtentry'])
+            self.txt.connect('activate',self.upload)
+            exec(f"self.{menu}.append(self.txt)")
+            self.kbox1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,halign=Gtk.Align.CENTER,valign=Gtk.Align.END)
+            exec(f"self.{menu}.append(self.kbox1)")
+            for key, value in shufla.items():
+                if k == 10:
+                    k = 0
+                    box += 1
+                    exec(f"self.kbox{box} = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,halign=Gtk.Align.CENTER,valign=Gtk.Align.END)")
+                    exec(f"self.{menu}.append(self.kbox{box})")
+                if key in string.ascii_lowercase:
+                    k +=1
+                    exec(f"self.key{key} = Gtk.Button(label=value)")
+                    exec(f"self.key{key}.connect('clicked', self.kentadd, value)")
+                    eval(f"self.kbox{box}.append(self.key{key})")
+            self.bottomtext = Gtk.Box(hexpand=True)
+            self.space = Gtk.Button(label="Space",hexpand=True)
+            self.space.connect('clicked', self.kentadd, " ")
+            self.backspace = Gtk.Button(label="Backspace",hexpand=True)
+            self.backspace.connect('clicked', self.kentback)
+            self.enter = Gtk.Button(label="Enter",hexpand=True)
+            self.enter.connect('clicked', self.kentadd, "chuj potem się tym zajmę")
+            self.bottomtext.append(self.backspace)
+            self.bottomtext.append(self.space)
+            self.bottomtext.append(self.enter)
+            exec(f"self.{menu}.append(self.bottomtext)")
+        else:
+            koks = False
+            for i in range(10):
+                try:
+                    exec(f"self.optbox.remove(self.kbox{i})")
+                except:
+                    pass
+    def upload(self, *args, **kwargs):
+        print(self.txt.get_text())
+    def kentadd(self, obj, add, *args, **kwargs):
+        current_text = self.txt.get_text()
+        self.txt.set_text(current_text + add)
+    def kentback(self, *args, **kwargs):
+        current_text = self.txt.get_text()
+        self.txt.set_text(current_text[:-1])
     def exit(self, *args, **kwargs):
         exit()
 class App(Adw.Application):
@@ -53,29 +357,6 @@ def translate(word, side = "lern") -> str:
         for key, value in normdub.items():
             word = word.replace(key, value)
         return ''.join(normsing.get(ch,ch) for ch in word)
-def qchoice() -> None:
-    wor = w.word()
-    print(f"{translate(wor)} means")
-    wors = w.random_words(4, word_min_length=len(wor), word_max_length=len(wor))
-    wors[random.randint(0,3)] = wor
-    wo = [f"{wors.index(wo)+1} {wo}" for wo in wors] 
-    print('\n'.join(wo))
-    try:
-        ans = input("Which one: ")
-    except KeyboardInterrupt:
-        exit()
-    anin = True
-    try:
-        ans = int(ans)
-    except:
-        anin = False
-    if ans == wor:
-        print("Great")
-    elif anin and wor == wors[ans-1]:
-        print("Great")
-    else:
-        print(f"Correct answer is {wor}")
-        raise ValueError("Braille or you'll stay blank")
 def qchoicehard() -> None:
     wor = w.word()
     print(f"{translate(wor)} means")
@@ -87,31 +368,6 @@ def qchoicehard() -> None:
         print("Great")
     else:
         print(f"Correct answer is {wor}")
-        raise ValueError("Braille or you'll stay blank")
-def qrevchoice() -> None:
-    wor = w.word()
-    print(f"{wor} means")
-    wors = w.random_words(4, word_min_length=len(wor), word_max_length=len(wor))
-    wors = [translate(asd) for asd in wors]
-    wors[random.randint(0,3)] = translate(wor)
-    wo = [f"{wors.index(wo)+1} {wo}" for wo in wors] 
-    print('\n'.join(wo))
-    alpha(True)
-    try:
-        ans = input("Which one: ")
-    except KeyboardInterrupt:
-        exit()
-    anin = True
-    try:
-        ans = int(ans)
-    except:
-        anin = False
-    if ans == translate(wor):
-        print("Great")
-    elif anin and translate(wor) == wors[ans-1]:
-        print("Great")
-    else:
-        print(f"Correct answer is {translate(wor)}")
         raise ValueError("Braille or you'll stay blank")
 def qrevchoicehard() -> None:
     wor = w.word()
@@ -126,29 +382,6 @@ def qrevchoicehard() -> None:
     else:
         print(f"Correct answer is {translate(wor)}")
         raise ValueError("Braille or you'll stay blank")
-def qchar() -> None:
-    le = random.choice(string.ascii_lowercase)
-    print(f"{translate(le)} is")
-    les = [random.choice(string.ascii_lowercase) for i in range(4)]
-    les[random.randint(0,3)] = le
-    woles = [f"{les.index(lo)+1} {lo}" for lo in les]
-    print('\n'.join(woles))
-    try:
-        ans = input("Which one: ").lower()
-    except KeyboardInterrupt:
-        exit()
-    anin = True
-    try:
-        ans = int(ans)
-    except:
-        anin = False
-    if ans == le:
-        print("Great")
-    elif anin and le == les[ans-1]:
-        print("Great")
-    else:
-        print(f"Correct asnwer is {le}")
-        raise ValueError("Braille or you'll stay blank")
 def qcharhard() -> None:
     le = random.choice(string.ascii_lowercase)
     print(f"{translate(le)} is")
@@ -160,31 +393,6 @@ def qcharhard() -> None:
         print("Great")
     else:
         print(f"Correct asnwer is {le}")
-        raise ValueError("Braille or you'll stay blank")
-def qrevchar() -> None:
-    le = random.choice(string.ascii_lowercase)
-    print(f"{le} is")
-    les = [random.choice(string.ascii_lowercase) for i in range(4)]
-    les = [translate(asd) for asd in les]
-    les[random.randint(0,3)] = translate(le)
-    woles = [f"{les.index(lo)+1} {lo}" for lo in les]
-    print('\n'.join(woles))
-    alpha(True)
-    try:
-        ans = input("Which one: ").lower()
-    except KeyboardInterrupt:
-        exit()
-    anin = True
-    try:
-        ans = int(ans)
-    except:
-        anin = False
-    if ans == translate(le):
-        print("Great")
-    elif anin and translate(le) == les[ans-1]:
-        print("Great")
-    else:
-        print(f"Correct asnwer is {translate(le)}")
         raise ValueError("Braille or you'll stay blank")
 def qrevcharhard() -> None:
     le = random.choice(string.ascii_lowercase)
@@ -199,32 +407,6 @@ def qrevcharhard() -> None:
     else:
         print(f"Correct asnwer is {translate(le)}")
         raise ValueError("Braille or you'll stay blank")
-def menu() -> None:
-    global fire
-    print(f"\033c{logo}")
-    fire = "\033[90m󰈸\033[0m"
-    if not first:
-        streakf(check = True)
-    livs()
-    print(f"Your current streak: {streak} {fire}")
-    print(f"Lvl: {lvl} exp: {exp}")
-    gbhyjmkn = ["\033[91m🫀\033[0m" for i in range(lives)]
-    print(f"Lifes: {''.join(gbhyjmkn)}")
-    options = ["Play", "Options", "Exit"]
-    opts = [f"{options.index(op)+1} {op}" for op in options]
-    loop = True
-    while loop:
-        print("\n".join(opts))
-        try:
-            opt = input("Which to play: ").lower()
-        except KeyboardInterrupt:
-            exit()
-        if opt in ["play", "p", "1"]:
-            play()
-        if opt in ["options", "o", "2"]:
-            option()
-        if opt in ["exit", "e", ":q", "3"]:
-            exit()
 def option() -> None:
     global hard
     print("\033cOptions")
@@ -239,8 +421,6 @@ def option() -> None:
             exit()
         if ans in ["reset streak", "1"]:
             streakf(True)
-        if ans in ["check lifes", "2"]:
-            livs(ver=True)
         if ans in ["show alphabet", "3", "show", "alpha"]:
             alpha()
         if ans in ["set lesson length", "4", "len", "set len"]:
@@ -349,9 +529,9 @@ def streakf(rest: bool = False, check: bool = False) -> None:
             streak = 0
             up = True 
         elif sdata == time:
-            fire = "\033[90m󰈸\033[0m"
+            fire = "gray"
         elif sdata > time:
-            fire = "\033[93m󰈸\033[0m"
+            fire = "orange"
     else:
         if rest:
             print("Streak reset")
@@ -396,23 +576,8 @@ def exppl(count: int = None) -> None:
         conf.update({"exp": exp, "lvl": lvl})
         with open(path, "w") as f:
             yaml.dump(conf, f, allow_unicode=True, sort_keys=False)
-def alpha(key: bool = False) -> None:
-    end = ""
-    if not key:
-        for key, value in lern.items():
-            end = end + f"{key}:{value} "
-    else:
-        sus = []
-        values = []
-        for key, value in lern.items():
-            values.append(value)
-        random.shuffle(values)
-        values = [f"\033[47m\033[30m{value}\033[0m|" for value in values]
-        vals = [''.join(values[i:i+10]) for i in range(0,len(values)+1,10)]
-        end = '\n'.join(vals)
-    print(end)
 def main(prof: str = None) -> None:
-    global exp, time, logo, smem, path, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard
+    global koks, fire, exp, time, logo, smem, path, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard
     time = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y.%m.%d"), "%Y.%m.%d")
     ftime = datetime.datetime.now()
     first = False
@@ -453,7 +618,6 @@ def main(prof: str = None) -> None:
         lern = {"a": "⠁","b": "⠃","c": "⠉","d": "⠙","e": "⠑","f": "⠋","g": "⠛","h": "⠓","i": "⠊","j": "⠚","k": "⠅","l": "⠇","m": "⠍","n": "⠝","o": "⠕","p": "⠏","q": "⠟","r": "⠗","s": "⠎","t": "⠞","u": "⠥","v": "⠧","w": "⠺","x": "⠭","y": "⠽","z": "⠵","ą":"⠡","ć":"⠩","ę":"⠱","ł":"⠣","ń":"⠹","ó":"⠬","ś":"⠪","ż":"⠯","ź":"⠮","0":"⠼⠚","1":"⠼⠁","2":"⠼⠃","3":"⠼⠉","4":"⠼⠙","5":"⠼⠑","6":"⠼⠋","7":"⠼⠛","8":"⠼⠓","9":"⠼⠊","-": "⠒",".": "⠲","'": "⡀",",": "⠂"}
     try:
         normsing = conf["normal"]["single"]
-
     except:
         normsing = {"⠁":"a","⠃":"b","⠉":"c","⠙":"d","⠑":"e","⠋":"f","⠛":"g","⠓":"h","⠊":"i","⠚":"j","⠅":"k","⠇":"l","⠍":"m","⠝":"n","⠕":"o","⠏":"p","⠟":"q","⠗":"r","⠎":"s","⠞":"t","⠥":"u","⠧":"v","⠺":"w","⠭":"x","⠽":"y","⠵":"z","⠡":"ą","⠩":"ć","⠱":"ę","⠣":"ł","⠹":"ń","⠬":"ó","⠪":"ś","⠯":"ż","⠮":"ź","-": "⠒",".":"⠲","'": "⡀",",":"⠂"}
     try:
@@ -461,8 +625,11 @@ def main(prof: str = None) -> None:
     except:
         normdub = {"⠼⠚": "0","⠼⠁": "1", "⠼⠃": "2","⠼⠉": "3","⠼⠙": "4","⠼⠑": "5","⠼⠋": "6","⠼⠛": "7","⠼⠓": "8","⠼⠊": "9"}
     w = wonderwords.RandomWord()
-    app = App(application_id="io.github.wilwe.duo.GtkApplication")
-    app.run(sys.argv)
+    if not first:
+        streakf(check = True)
+    koks = False
+    app = App(application_id="io.github.wilwe.duo")
+    app.run()
     #menu()
 
 if __name__ == "__main__":

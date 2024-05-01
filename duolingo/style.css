@@ -1,3 +1,9 @@
+.good {
+	color: green;
+}
+.wrong {
+	color: red;
+}
 label {
 	font-size: 25px;
 	padding: 7px;
@@ -6,7 +12,38 @@ label {
 	color: Red;
 	font-size: 30px;
 }
+.nostreak {
+	color: gray;
+}
+.gstreak {
+	font-size: 30px;
+}
+.streak {
+	color: orange;
+}
+.word{
+	font-size: 35px;
+}
 button {
 	padding: 7px;
 	margin: 7px;
+}
+.anstop button {
+	max-height: 200px;
+}
+.ansbot button {
+	max-height: 200px;
+}
+.optsbox {
+	overflow-wrap: break-word;
+	white-space: normal;
+}
+.keyboard {
+	display: flex;
+	overflow: hide;
+	max-width: 50px;
+}
+.txtentry {
+	margin: 7px;
+	padding: 7px;
 }
