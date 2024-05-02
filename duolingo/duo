@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# separate categories in definition gameplay
 import sys, os
 import gi
 gi.require_version('Gtk', '4.0')
@@ -231,7 +232,9 @@ class MainWindow(Gtk.ApplicationWindow):
             self.exbox.append(self.ppbox)
             modes = []
             if typ == "lang":
-                modes = ["qchoice","qrevchoice","qchar","qrevchar"]
+                modes = ["lchoice", "lrevchoice", "lchar", "lrevchar"]
+            if typ == "defs":
+                modes = ["dchoice", "drevchoice"]
             if modes != []:
                 mod = random.choice(modes)
                 eval(f"self.{mod}()")
@@ -245,7 +248,104 @@ class MainWindow(Gtk.ApplicationWindow):
             streakf()
             self.menu()
 
-    def qchoice(self, *args, **kwargs) -> None:
+    def dchoice(self, *args, **kwargs) -> None:
+        global wors, wor
+        wor, val = random.choice(list(defin.items()))
+        self.mword = Gtk.Label(label=wor)
+        wor = val
+        self.mword.set_css_classes(['word'])
+        self.ppbox.append(self.mword)
+        wors = []
+        for i in range(4):
+            hand, name = random.choice(list(defin.items()))
+            wors.append(name)
+        wors[random.randint(0,3)] = wor
+        self.w1 = Gtk.Button(label=wors[0])
+        self.w1.set_css_classes(["but"])
+        self.w1.connect('clicked', self.checkbut, 0)
+        self.w2 = Gtk.Button(label=wors[1])
+        self.w2.set_css_classes(["but"])
+        self.w2.connect('clicked', self.checkbut, 1)
+        self.w3 = Gtk.Button(label=wors[2])
+        self.w3.set_css_classes(["but"])
+        self.w3.connect('clicked', self.checkbut, 2)
+        self.w4 = Gtk.Button(label=wors[3])
+        self.w4.set_css_classes(["but"])
+        self.w4.connect('clicked', self.checkbut, 3)
+        self.w1.set_size_request(width=150,height=150)
+        self.w2.set_size_request(width=150,height=150)
+        self.w3.set_size_request(width=150,height=150)
+        self.w4.set_size_request(width=150,height=150)
+        self.toppbox = Gtk.CenterBox()
+        self.botppbox = Gtk.CenterBox()
+        self.botppbox.set_css_classes(['botppbox'])
+        self.ppbox.append(self.toppbox)
+        self.ppbox.append(self.botppbox)
+        self.tpbo = Gtk.Box()
+        self.tpbo.append(self.w1)
+        self.tpbo.append(self.w2)
+        self.toppbox.set_center_widget(self.tpbo)
+        self.btbo = Gtk.Box()
+        self.btbo.append(self.w3)
+        self.btbo.append(self.w4)
+        self.botppbox.set_center_widget(self.btbo)
+        self.next = Gtk.Button(label="next")
+        self.next.set_css_classes(["but"])
+        self.ppbox.append(self.nextbox)
+        self.next.set_css_classes(['next'])
+        self.nextbox.append(self.next)
+        self.next.connect('clicked', self.play)
+        self.next.set_sensitive(False)
+
+    def drevchoice(self, *args, **kwargs) -> None:
+        global wors, wor
+        wor, val = random.choice(list(defin.items()))
+        self.mword = Gtk.Label(label=val)
+        self.mword.set_css_classes(['word'])
+        self.ppbox.append(self.mword)
+        wors = []
+        for i in range(4):
+            hand, name = random.choice(list(defin.items()))
+            wors.append(hand)
+        wors[random.randint(0,3)] = wor
+        self.w1 = Gtk.Button(label=wors[0])
+        self.w1.set_css_classes(["but"])
+        self.w1.connect('clicked', self.checkbut, 0)
+        self.w2 = Gtk.Button(label=wors[1])
+        self.w2.set_css_classes(["but"])
+        self.w2.connect('clicked', self.checkbut, 1)
+        self.w3 = Gtk.Button(label=wors[2])
+        self.w3.set_css_classes(["but"])
+        self.w3.connect('clicked', self.checkbut, 2)
+        self.w4 = Gtk.Button(label=wors[3])
+        self.w4.set_css_classes(["but"])
+        self.w4.connect('clicked', self.checkbut, 3)
+        self.w1.set_size_request(width=150,height=150)
+        self.w2.set_size_request(width=150,height=150)
+        self.w3.set_size_request(width=150,height=150)
+        self.w4.set_size_request(width=150,height=150)
+        self.toppbox = Gtk.CenterBox()
+        self.botppbox = Gtk.CenterBox()
+        self.botppbox.set_css_classes(['botppbox'])
+        self.ppbox.append(self.toppbox)
+        self.ppbox.append(self.botppbox)
+        self.tpbo = Gtk.Box()
+        self.tpbo.append(self.w1)
+        self.tpbo.append(self.w2)
+        self.toppbox.set_center_widget(self.tpbo)
+        self.btbo = Gtk.Box()
+        self.btbo.append(self.w3)
+        self.btbo.append(self.w4)
+        self.botppbox.set_center_widget(self.btbo)
+        self.next = Gtk.Button(label="next")
+        self.next.set_css_classes(["but"])
+        self.ppbox.append(self.nextbox)
+        self.next.set_css_classes(['next'])
+        self.nextbox.append(self.next)
+        self.next.connect('clicked', self.play)
+        self.next.set_sensitive(False)
+
+    def lchoice(self, *args, **kwargs) -> None:
         global wors, wor
         wor = w.word()
         self.mword = Gtk.Label(label=translate(wor))
@@ -293,7 +393,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.next.connect('clicked', self.play)
         self.next.set_sensitive(False)
 
-    def qrevchoice(self, *args, **kwargs) -> None:
+    def lrevchoice(self, *args, **kwargs) -> None:
         global wors, wor
         wor = w.word()
         self.mword = Gtk.Label(label=wor)
@@ -343,7 +443,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.nextbox.append(self.next)
         self.next.connect('clicked', self.play)
         self.next.set_sensitive(False)
-    def qchar(self, *args, **kwargs) -> None:
+    def lchar(self, *args, **kwargs) -> None:
         global wors, wor
         wor = random.choice(string.ascii_lowercase)
         self.mword = Gtk.Label(label=translate(wor))
@@ -391,7 +491,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.next.connect('clicked', self.play)
         self.next.set_sensitive(False)
 
-    def qrevchar(self, *args, **kwargs) -> None:
+    def lrevchar(self, *args, **kwargs) -> None:
         global wors, wor
         wor = random.choice(string.ascii_lowercase)
         self.mword = Gtk.Label(label=wor)
@@ -451,6 +551,10 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.exppl(lvl+streak+10)
             if mod == 'qrevchoice':
                 self.exppl(lvl+streak+15)
+            if mod == "dchoice":
+                self.exppl(lvl+streak+10)
+            if mod == "drevchoice":
+                self.exppl(lvl+streak+10)
             self.title.set_label(f"Good {lesson}/{lessonLength}")
             self.title.set_css_classes(['good'])
             self.mword.add_css_class('good')
@@ -682,7 +786,7 @@ def changeprof(obj, window):
     window.destroy()
     main(sus)
 def main(prof: str = None) -> None:
-    global app, profile, koks, lvlup, fire, exp, time, logo, smem, path, typ, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard, sound
+    global defin, app, profile, koks, lvlup, fire, exp, time, logo, smem, path, typ, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard, sound
     time = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y.%m.%d"), "%Y.%m.%d")
     ftime = datetime.datetime.now()
     lvlup = False
@@ -736,6 +840,11 @@ def main(prof: str = None) -> None:
             normdub = conf["normal"]["dubles"]
         except:
             normdub = {"⠼⠚": "0","⠼⠁": "1", "⠼⠃": "2","⠼⠉": "3","⠼⠙": "4","⠼⠑": "5","⠼⠋": "6","⠼⠛": "7","⠼⠓": "8","⠼⠊": "9"}
+    if typ == 'defs':
+        try:
+            defin = conf["definitions"]
+        except:
+            defin = {"🂪🂫🂭🂮🂡": "Poker", "🂦🂥🂭🂣🂡": "Kolor", "🂣🂤🂥🂦🂧": "Strit w kolorze", "🂩🂺🂫🃍🃞": "Strit", "🂨🂸🂣🂤🂮": "Para", "🂮🂾🃞🃕🃒": "Trójka", "🂡🃑🂱🃁🂶": "Czwórka", "🂪🂺🃋🃛🃃": "Dwie pary", "🂨🂸🂾🃎🂮": "Full", "🂡🂵🃘🃉🂫": "Wysoka karta"}
     w = wonderwords.RandomWord()
     if not first:
         streakf(check = True)

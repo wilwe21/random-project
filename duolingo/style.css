@@ -24,15 +24,6 @@ label {
 .word{
 	font-size: 35px;
 }
-button {
-	padding: 7px;
-	margin: 7px;
-}
-button, button:active, button:hover, #playbut {
-	background-image: None;
-	background-color: white;
-	color: @accent_fg_color;
-}
 .txtentry {
 	margin: 7px;
 	padding: 7px;
@@ -43,10 +34,6 @@ button, button:active, button:hover, #playbut {
 progressbar > trough {
 	padding: 7px;
 	margin: 7px;
-}
-progressbar > text {
-	color: #fafaaa;
-	font-size: 20px;
 }
 .keyboard {
 	margin: 7px;
@@ -61,12 +48,22 @@ progressbar > text {
 	margin: 7px;
 	padding: 7px;
 }
+.but {
+	background-color: alpha(@accent_bg_color, 0.85);
+	color: @accent_fg_color;
+	padding: 7px;
+	margin: 7px;
+}
 .profbox {
 	background-color: @accent_bg_color;
 	color: @accent_fg_color;
 	border-radius: 7px;
 	margin: 7px;
 	padding: 7px;
+}
+
+.profbox:focus > button {
+	background-color: alpha(@theme_bg_color, 0.05);
 }
 .profbox > button > label {
 	color: @accent_fg_color;
