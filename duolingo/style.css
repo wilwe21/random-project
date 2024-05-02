@@ -28,6 +28,11 @@ button {
 	padding: 7px;
 	margin: 7px;
 }
+button, button:active, button:hover, #playbut {
+	background-image: None;
+	background-color: white;
+	color: @accent_fg_color;
+}
 .txtentry {
 	margin: 7px;
 	padding: 7px;
@@ -55,4 +60,14 @@ progressbar > text {
 .rightprof {
 	margin: 7px;
 	padding: 7px;
+}
+.profbox {
+	background-color: @accent_bg_color;
+	color: @accent_fg_color;
+	border-radius: 7px;
+	margin: 7px;
+	padding: 7px;
+}
+.profbox > button > label {
+	color: @accent_fg_color;
 }
