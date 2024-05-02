@@ -48,3 +48,11 @@ progressbar > text {
 	margin-bottom: -5px;
 	padding: 7px;
 }
+.leftprof {
+	margin: 7px;
+	padding: 7px;
+}
+.rightprof {
+	margin: 7px;
+	padding: 7px;
+}
