@@ -285,8 +285,7 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.exbox.append(self.ppbox)
                 modes = []
                 if typ == "lang":
-                    #modes = ["lchoice", "lrevchoice", "lchar", "lrevchar", "lnumb", "lrevnumb"]
-                    modes = ["lnumb", "lrevnumb"]
+                    modes = ["lchoice", "lrevchoice", "lchar", "lrevchar", "lnumb", "lrevnumb"]
                 if typ == "defs":
                     modes = ["dchoice", "drevchoice"]
                 if modes != []:
