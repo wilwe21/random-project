@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# separate categories in definition gameplay
 import sys, os
 import gi
 gi.require_version('Gtk', '4.0')
@@ -18,7 +17,7 @@ Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css_provide
 class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.set_size_request(808, 565)
+        self.set_size_request(810, 575)
         self.menu()
     def menu(self, *args, **kwargs):
         livs()
@@ -246,7 +245,10 @@ class MainWindow(Gtk.ApplicationWindow):
                 modes = ["dchoice", "drevchoice"]
             if modes != []:
                 mod = random.choice(modes)
-                eval(f"self.{mod}()")
+                try:
+                    eval(f"self.{mod}()")
+                except Exception as e:
+                    print(f"Taki chuj {e}")
             else:
                 self.title.set_text(f"{typ} type don't exist")
                 self.exitbuttonofsadness = Gtk.Button(label="Back")
@@ -259,26 +261,64 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def dchoice(self, *args, **kwargs) -> None:
         global wors, wor
-        wor, val = random.choice(list(defin.items()))
-        self.mword = Gtk.Label(label=wor)
+        cats = []
+        for key, value in categories.items():
+            cats.append(key)
+        cat = random.choice(cats)
+        wor, val = random.choice(list(categories[cat].items()))
+        if os.path.isfile(wor):
+            self.mword = Gtk.Image.new_from_file(wor)
+            self.mword.set_size_request(150,150)
+        else:
+            self.mword = Gtk.Label(label=wor)
         wor = val
         self.mword.set_css_classes(['word'])
-        self.ppbox.append(self.mword)
+        self.catbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.category = Gtk.Label(label="Category")
+        self.cat = Gtk.Label(label=cat.title())
+        self.catbox.append(self.category)
+        self.catbox.append(self.cat)
+        self.wbox = Gtk.CenterBox(hexpand=True)
+        self.wbox.set_center_widget(self.mword)
+        self.wbox.set_end_widget(self.catbox)
+        self.ppbox.append(self.wbox)
         wors = []
         for i in range(4):
-            hand, name = random.choice(list(defin.items()))
+            hand, name = random.choice(list(categories[cat].items()))
+            if name in wors or hand == wor:
+                hand, name = random.choice(list(categories[cat].items()))
             wors.append(name)
         wors[random.randint(0,3)] = wor
-        self.w1 = Gtk.Button(label=wors[0])
+        if os.path.isfile(wors[0]):
+            self.w1 = Gtk.Button()
+            self.w1img = Gtk.Image.new_from_file(wors[0])
+            self.w1.set_child(self.w1img)
+        else:
+            self.w1 = Gtk.Button(label=wors[0])
         self.w1.set_css_classes(["but"])
         self.w1.connect('clicked', self.checkbut, 0)
-        self.w2 = Gtk.Button(label=wors[1])
+        if os.path.isfile(wors[1]):
+            self.w2 = Gtk.Button()
+            self.w2img = Gtk.Image.new_from_file(wors[1])
+            self.w2.set_child(self.w2img)
+        else:
+            self.w2 = Gtk.Button(label=wors[1])
         self.w2.set_css_classes(["but"])
         self.w2.connect('clicked', self.checkbut, 1)
-        self.w3 = Gtk.Button(label=wors[2])
+        if os.path.isfile(wors[2]):
+            self.w3 = Gtk.Button()
+            self.w3img = Gtk.Image.new_from_file(wors[2])
+            self.w3.set_child(self.w3img)
+        else:
+            self.w3 = Gtk.Button(label=wors[2])
         self.w3.set_css_classes(["but"])
         self.w3.connect('clicked', self.checkbut, 2)
-        self.w4 = Gtk.Button(label=wors[3])
+        if os.path.isfile(wors[3]):
+            self.w4 = Gtk.Button()
+            self.w4img = Gtk.Image.new_from_file(wors[3])
+            self.w4.set_child(self.w4img)
+        else:
+            self.w4 = Gtk.Button(label=wors[3])
         self.w4.set_css_classes(["but"])
         self.w4.connect('clicked', self.checkbut, 3)
         self.w1.set_size_request(width=150,height=150)
@@ -308,16 +348,39 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def drevchoice(self, *args, **kwargs) -> None:
         global wors, wor
-        wor, val = random.choice(list(defin.items()))
-        self.mword = Gtk.Label(label=val)
+        cats = []
+        for key, value in categories.items():
+            cats.append(key)
+        cat = random.choice(cats)
+        wor, val = random.choice(list(categories[cat].items()))
+        if os.path.isfile(val):
+            self.mword = Gtk.Image.new_from_file(val)
+            self.mword.set_size_request(150,150)
+        else:
+            self.mword = Gtk.Label(label=val)
         self.mword.set_css_classes(['word'])
-        self.ppbox.append(self.mword)
+        self.catbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.category = Gtk.Label(label="Category")
+        self.cat = Gtk.Label(label=cat.title())
+        self.catbox.append(self.category)
+        self.catbox.append(self.cat)
+        self.wbox = Gtk.CenterBox(hexpand=True)
+        self.wbox.set_center_widget(self.mword)
+        self.wbox.set_end_widget(self.catbox)
+        self.ppbox.append(self.wbox)
         wors = []
         for i in range(4):
-            hand, name = random.choice(list(defin.items()))
+            hand, name = random.choice(list(categories[cat].items()))
+            if hand in wors or hand == wor:
+                hand, name = random.choice(list(categories[cat].items()))
             wors.append(hand)
         wors[random.randint(0,3)] = wor
-        self.w1 = Gtk.Button(label=wors[0])
+        if os.path.isfile(wors[0]):
+            self.w1 = Gtk.Button()
+            self.w1img = Gtk.Image.new_from_file(wors[0])
+            self.w1.set_child(self.w1img)
+        else:
+            self.w1 = Gtk.Button(label=wors[0])
         self.w1.set_css_classes(["but"])
         self.w1.connect('clicked', self.checkbut, 0)
         self.w2 = Gtk.Button(label=wors[1])
@@ -361,7 +424,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.mword.set_css_classes(['word'])
         self.ppbox.append(self.mword)
         if not hard:
-            wors = w.random_words(4, word_min_length=len(wor), word_max_length=len(wor))
+            wors = []
+            for i in range(4):
+                hand = w.word(word_min_length=len(wor), word_max_length=len(wor))
+                if hand in wors or hand == wor:
+                    hand = w.word(word_min_length=len(wor), word_max_length=len(wor))
+                wors.append(hand)
             wors[random.randint(0,3)] = wor
             self.w1 = Gtk.Button(label=wors[0])
             self.w1.set_css_classes(["but"])
@@ -412,7 +480,10 @@ class MainWindow(Gtk.ApplicationWindow):
         if not hard:
             wors = []
             for i in range(4):
-                wors.append(translate(w.word(word_min_length=len(wor), word_max_length=len(wor))))
+                hand = translate(w.word(word_min_length=len(wor), word_max_length=len(wor)))
+                if hand in wors or hand == wor:
+                    hand = translate(w.word(word_min_length=len(wor), word_max_length=len(wor)))
+                wors.append(hand)
             wors[random.randint(0,3)] = wor
             self.w1 = Gtk.Button(label=wors[0])
             self.w1.set_css_classes(["but"])
@@ -459,7 +530,12 @@ class MainWindow(Gtk.ApplicationWindow):
         self.mword.set_css_classes(['word'])
         self.ppbox.append(self.mword)
         if not hard:
-            wors = [random.choice(string.ascii_lowercase) for i in range(4)]
+            wors = []
+            for i in range(4):
+                hand = random.choice(string.ascii_lower)
+                if hand in wors or hand == wor:
+                    hand = random.choice(string.ascii_lowercase)
+                wors.append(hand)
             wors[random.randint(0,3)] = wor
             self.w1 = Gtk.Button(label=wors[0])
             self.w1.set_css_classes(["but"])
@@ -510,7 +586,10 @@ class MainWindow(Gtk.ApplicationWindow):
         if not hard:
             wors = []
             for i in range(4):
-                wors.append(translate(random.choice(string.ascii_lowercase)))
+                hand = translate(random.choice(string.ascii_lowercase))
+                if hand in wors or hand == wor:
+                    hand = translate(random.choice(string.ascii_lowercase))
+                wors.append(hand)
             wors[random.randint(0,3)] = wor
             self.w1 = Gtk.Button(label=wors[0])
             self.w1.set_css_classes(["but"])
@@ -795,7 +874,7 @@ def changeprof(obj, window):
     window.destroy()
     main(sus)
 def main(prof: str = None) -> None:
-    global defin, app, profile, koks, lvlup, fire, exp, time, logo, smem, path, typ, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard, sound
+    global categories, app, profile, koks, lvlup, fire, exp, time, logo, smem, path, typ, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard, sound
     time = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y.%m.%d"), "%Y.%m.%d")
     ftime = datetime.datetime.now()
     lvlup = False
@@ -851,9 +930,9 @@ def main(prof: str = None) -> None:
             normdub = {"⠼⠚": "0","⠼⠁": "1", "⠼⠃": "2","⠼⠉": "3","⠼⠙": "4","⠼⠑": "5","⠼⠋": "6","⠼⠛": "7","⠼⠓": "8","⠼⠊": "9"}
     if typ == 'defs':
         try:
-            defin = conf["definitions"]
+            categories = conf["categories"]
         except:
-            defin = {"🂪🂫🂭🂮🂡": "Poker", "🂦🂥🂭🂣🂡": "Kolor", "🂣🂤🂥🂦🂧": "Strit w kolorze", "🂩🂺🂫🃍🃞": "Strit", "🂨🂸🂣🂤🂮": "Para", "🂮🂾🃞🃕🃒": "Trójka", "🂡🃑🂱🃁🂶": "Czwórka", "🂪🂺🃋🃛🃃": "Dwie pary", "🂨🂸🂾🃎🂮": "Full", "🂡🂵🃘🃉🂫": "Wysoka karta"}
+            categories = {"poker": {"🂪🂫🂭🂮🂡": "Poker", "🂦🂥🂭🂣🂡": "Kolor", "🂣🂤🂥🂦🂧": "Strit w kolorze", "🂩🂺🂫🃍🃞": "Strit", "🂨🂸🂣🂤🂮": "Para", "🂮🂾🃞🃕🃒": "Trójka", "🂡🃑🂱🃁🂶": "Czwórka", "🂪🂺🃋🃛🃃": "Dwie pary", "🂨🂸🂾🃎🂮": "Full", "🂡🂵🃘🃉🂫": "Wysoka karta"}}
     w = wonderwords.RandomWord()
     if not first:
         streakf(check = True)

@@ -1,0 +1,41 @@
+logo: Welcome to duolingo for Geoguesser masters
+smem: Your streak gone
+streak:
+  count: 0
+  data: 2024.05.04
+type: defs
+lvl: 0
+exp: 0
+hard: false
+sound: true
+lives: 5
+maxlives: 5
+ldat: null
+length: 5
+categories:
+  bollards:
+    german: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/germany.jpg
+    poland: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/poland.jpg
+    france: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/france.jpg
+    spain: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/spain.jpg
+    czechia: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/czechia.jpg
+    denmark: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/denmark.jpg
+    estonia: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/estonia.jpg
+    finland: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/finland.jpg
+    latvia: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/latvia.jpg
+    lithuania: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/lithuania.jpg
+    norway: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/norway.jpg
+    portugal: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/portugal.jpg
+    sweden: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/sweden.jpg
+    austria: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/austria.jpg
+    hungary: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/hungary.jpg
+    italy: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/italy.jpg
+    slovakia: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/slovakia.jpg
+    switzerland: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/switzerland.jpg
+    ukraine: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/ukraine.jpg
+    albania: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/albania.jpg
+    cratia: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/croatia.jpg
+    montenegro: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/montenegro.jpg
+    romania: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/romania.jpg
+    serbia: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/serbia.jpg
+    slovenia: /home/wilwe/Dokumenty/GitHub/random-project/duolingo/presets/geo/bollards/slovenia.jpg

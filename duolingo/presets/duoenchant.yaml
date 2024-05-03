@@ -1,4 +1,17 @@
 logo: Welcome to duolingo for SIMP (Super Intensive Minecraft Player)
+smem: Your streak gone
+streak:
+  count: 0
+  data: 2024.05.04
+type: lang
+lvl: 0
+exp: 0
+hard: false
+sound: true
+lives: 5
+maxlives: 5
+ldat: Null
+length: 5
 lern:
   a: ᔑ
   b: ʖ
