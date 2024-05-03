@@ -148,8 +148,10 @@ class MainWindow(Gtk.ApplicationWindow):
         self.tbox.set_end_widget(self.lives)
         self.topb = Gtk.Box(hexpand=True)
         self.profbox.append(self.topb)
-        self.tab1but = Gtk.Button(label="tab1", hexpand=True)
-        self.tab2but = Gtk.Button(label="tab2", hexpand=True)
+        self.tab1but = Gtk.Button(label="Profile", hexpand=True)
+        self.tab1but.set_state_flags(Gtk.StateFlags.ACTIVE, True)
+        self.tab2but = Gtk.Button(label="Info", hexpand=True)
+        self.tab2but.connect('clicked', self.profmenut2)
         self.backbut = Gtk.Button(label="Back", hexpand=True)
         self.backbut.connect('clicked', self.menu)
         self.topb.append(self.tab1but)
@@ -157,21 +159,63 @@ class MainWindow(Gtk.ApplicationWindow):
         self.topb.append(self.backbut)
         self.sidecut = Gtk.CenterBox(hexpand=True,vexpand=True)
         self.profbox.append(self.sidecut)
-        self.leftprof = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, vexpand=True,halign=Gtk.Align.START)
+        self.leftprof = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, vexpand=True, hexpand=True, halign=Gtk.Align.CENTER)
         self.leftprof.set_css_classes(['leftprof'])
-        self.rightprof = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, vexpand=True,halign=Gtk.Align.END)
+        self.rightprof = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, vexpand=True, hexpand=True, halign=Gtk.Align.CENTER)
         self.rightprof.set_css_classes(['rightprof'])
         self.sidecut.set_start_widget(self.leftprof)
         self.sidecut.set_end_widget(self.rightprof)
         self.profentry = Gtk.Entry()
+        self.pelab = Gtk.Label(label="Change Profile")
+        self.rightprof.append(self.pelab)
         self.rightprof.append(self.profentry)
         self.profentry.connect('activate',changeprof, self)
         self.profnamelab = Gtk.Label(label=f"{profile}:")
-        self.lerntypelab = Gtk.Label(label=f"Type: {typ}")
-        self.profnamelab.set_justify(Gtk.Justification.LEFT)
-        self.lerntypelab.set_justify(Gtk.Justification.LEFT)
+        self.lerntypelab = Gtk.Label(label=f"Type: {typs}")
+        self.profnamelab.set_justify(Gtk.Justification.CENTER)
+        self.lerntypelab.set_justify(Gtk.Justification.CENTER)
         self.leftprof.append(self.profnamelab)
         self.leftprof.append(self.lerntypelab)
+
+    def profmenut2(self, *args, **kwargs):
+        self.profbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,vexpand=True)
+        self.set_child(self.profbox)
+        self.tbox = Gtk.CenterBox(hexpand=True)
+        self.profbox.append(self.tbox)
+        self.title = Gtk.Label(label="Profile",wrap=True,justify='center')
+        self.lives = Gtk.Label(label=f"{lives}🫀")
+        self.streak = Gtk.Label(label=f"{streak} 󰈸")
+        self.lives.set_css_classes(["lifes"])
+        self.tbox.set_start_widget(self.streak)
+        if fire == 'gray':
+            self.streak.set_css_classes(["nostreak","gstreak"])
+        elif fire == 'orange':
+            self.streak.set_css_classes(["streak","gstreak"])
+        self.tbox.set_center_widget(self.title)
+        self.tbox.set_end_widget(self.lives)
+        self.topb = Gtk.Box(hexpand=True)
+        self.profbox.append(self.topb)
+        self.tab1but = Gtk.Button(label="Profile", hexpand=True)
+        self.tab1but.connect('clicked', self.profmenu)
+        self.tab2but = Gtk.Button(label="Info", hexpand=True)
+        self.tab2but.set_state_flags(Gtk.StateFlags.ACTIVE, True)
+        self.backbut = Gtk.Button(label="Back", hexpand=True)
+        self.backbut.connect('clicked', self.menu)
+        self.topb.append(self.tab1but)
+        self.topb.append(self.tab2but)
+        self.topb.append(self.backbut)
+        self.sidecut = Gtk.CenterBox(hexpand=True,vexpand=True)
+        self.profbox.append(self.sidecut)
+        self.leftprof = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, vexpand=True, hexpand=True, halign=Gtk.Align.CENTER)
+        self.leftprof.set_css_classes(['leftprof'])
+        self.rightprof = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, vexpand=True, hexpand=True, halign=Gtk.Align.CENTER)
+        self.rightprof.set_css_classes(['rightprof'])
+        self.sidecut.set_start_widget(self.leftprof)
+        self.sidecut.set_end_widget(self.rightprof)
+        self.llab = Gtk.Label(label="left")
+        self.rlab = Gtk.Label(label="right")
+        self.leftprof.append(self.llab)
+        self.rightprof.append(self.rlab)
 
     def ssw(self, *args, **kwargs):
         global sound, conf
@@ -874,7 +918,7 @@ def changeprof(obj, window):
     window.destroy()
     main(sus)
 def main(prof: str = None) -> None:
-    global categories, app, profile, koks, lvlup, fire, exp, time, logo, smem, path, typ, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard, sound
+    global categories, app, profile, koks, lvlup, fire, exp, time, logo, smem, path, typ, typs, ftime, w, streak, sdata, lives, lvl, ldat, maxlive, lessonLength, conf, first, lern, normsing, normdub, hard, sound
     time = datetime.datetime.strptime(datetime.datetime.now().strftime("%Y.%m.%d"), "%Y.%m.%d")
     ftime = datetime.datetime.now()
     lvlup = False
@@ -905,6 +949,12 @@ def main(prof: str = None) -> None:
     except:
         smem = "Your streak gone"
     typ = conf["type"]
+    if typ == "lang":
+        typs = "Language"
+    elif typ == "defs":
+        typs = "Definitions"
+    else:
+        typs = "Unknown"
     streak = conf["streak"]["count"]
     sdata = datetime.datetime.strptime(conf["streak"]["data"], "%Y.%m.%d")
     lvl = conf["lvl"]
