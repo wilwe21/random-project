@@ -4,7 +4,7 @@ import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Gdk, Adw
-import yaml, argparse, random, wonderwords, datetime, string 
+import yaml, argparse, random, wonderwords, datetime, string, unicodedata
 from playsound import playsound
 from time import sleep
 from dateutil.relativedelta import relativedelta
@@ -17,7 +17,7 @@ Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css_provide
 class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.set_size_request(810, 575)
+        self.set_size_request(1111, 690)
         self.menu()
     def menu(self, *args, **kwargs):
         livs()
@@ -261,46 +261,47 @@ class MainWindow(Gtk.ApplicationWindow):
             self.title.set_label("You don't have lifes")
     def play(self, *args, **kwargs):
         global lesson, mod
-        if lesson < lessonLength:
-            lesson +=1
-            self.exbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-            self.set_child(self.exbox)
-            self.tbox = Gtk.CenterBox(hexpand=True)
-            self.exbox.append(self.tbox)
-            self.title = Gtk.Label(label=f"Exercise {lesson}/{lessonLength}",wrap=True,justify='center')
-            self.lives = Gtk.Label(label=f"{lives}🫀")
-            self.streak = Gtk.Label(label=f"{streak} 󰈸")
-            self.lives.set_css_classes(["lifes"])
-            self.tbox.set_start_widget(self.streak)
-            if fire == 'gray':
-                self.streak.set_css_classes(["nostreak","gstreak"])
-            elif fire == 'orange':
-                self.streak.set_css_classes(["streak","gstreak"])
-            self.tbox.set_center_widget(self.title)
-            self.tbox.set_end_widget(self.lives)
-            self.ppbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,hexpand=True,vexpand=True)
-            self.ppbox.set_css_classes(['ppbox'])
-            self.nextbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,hexpand=True,vexpand=True,valign=Gtk.Align.END)
-            self.exbox.append(self.ppbox)
-            modes = []
-            if typ == "lang":
-                modes = ["lchoice", "lrevchoice", "lchar", "lrevchar"]
-            if typ == "defs":
-                modes = ["dchoice", "drevchoice"]
-            if modes != []:
-                mod = random.choice(modes)
-                try:
+        if lives > 0:
+            if lesson < lessonLength:
+                lesson +=1
+                self.exbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+                self.set_child(self.exbox)
+                self.tbox = Gtk.CenterBox(hexpand=True)
+                self.exbox.append(self.tbox)
+                self.title = Gtk.Label(label=f"Exercise {lesson}/{lessonLength}",wrap=True,justify='center')
+                self.lives = Gtk.Label(label=f"{lives}🫀")
+                self.streak = Gtk.Label(label=f"{streak} 󰈸")
+                self.lives.set_css_classes(["lifes"])
+                self.tbox.set_start_widget(self.streak)
+                if fire == 'gray':
+                    self.streak.set_css_classes(["nostreak","gstreak"])
+                elif fire == 'orange':
+                    self.streak.set_css_classes(["streak","gstreak"])
+                self.tbox.set_center_widget(self.title)
+                self.tbox.set_end_widget(self.lives)
+                self.ppbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,hexpand=True,vexpand=True)
+                self.ppbox.set_css_classes(['ppbox'])
+                self.nextbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,hexpand=True,vexpand=True,valign=Gtk.Align.END)
+                self.exbox.append(self.ppbox)
+                modes = []
+                if typ == "lang":
+                    #modes = ["lchoice", "lrevchoice", "lchar", "lrevchar", "lnumb", "lrevnumb"]
+                    modes = ["lnumb", "lrevnumb"]
+                if typ == "defs":
+                    modes = ["dchoice", "drevchoice"]
+                if modes != []:
+                    mod = random.choice(modes)
                     eval(f"self.{mod}()")
-                except Exception as e:
-                    print(f"Taki chuj {e}")
-            else:
-                self.title.set_text(f"{typ} type don't exist")
-                self.exitbuttonofsadness = Gtk.Button(label="Back")
-                self.exitbuttonofsadness.set_css_classes(["but"])
-                self.exitbuttonofsadness.connect('clicked', self.menu)
-                self.ppbox.append(self.exitbuttonofsadness)
-        elif lesson == lessonLength:
-            streakf()
+                else:
+                    self.title.set_text(f"{typ} type don't exist")
+                    self.exitbuttonofsadness = Gtk.Button(label="Back")
+                    self.exitbuttonofsadness.set_css_classes(["but"])
+                    self.exitbuttonofsadness.connect('clicked', self.menu)
+                    self.ppbox.append(self.exitbuttonofsadness)
+            elif lesson == lessonLength:
+                streakf()
+                self.menu()
+        else:
             self.menu()
 
     def dchoice(self, *args, **kwargs) -> None:
@@ -673,6 +674,114 @@ class MainWindow(Gtk.ApplicationWindow):
         self.nextbox.append(self.next)
         self.next.connect('clicked', self.play)
         self.next.set_sensitive(False)
+
+    def lnumb(self, *args, **kwargs) -> None:
+        global wors, wor
+        wor = f"{random.randint(0,9)}"
+        self.mword = Gtk.Label(label=translate(wor))
+        self.mword.set_css_classes(['word'])
+        self.ppbox.append(self.mword)
+        if not hard:
+            wors = []
+            for i in range(4):
+                hand = f"{random.randint(0,9)}"
+                if hand in wors or hand == wor:
+                    hand = f"{random.randint(0,9)}"
+                wors.append(hand)
+            wors[random.randint(0,3)] = wor
+            self.w1 = Gtk.Button(label=wors[0])
+            self.w1.set_css_classes(["but"])
+            self.w1.connect('clicked', self.checkbut, 0)
+            self.w2 = Gtk.Button(label=wors[1])
+            self.w2.set_css_classes(["but"])
+            self.w2.connect('clicked', self.checkbut, 1)
+            self.w3 = Gtk.Button(label=wors[2])
+            self.w3.set_css_classes(["but"])
+            self.w3.connect('clicked', self.checkbut, 2)
+            self.w4 = Gtk.Button(label=wors[3])
+            self.w4.set_css_classes(["but"])
+            self.w4.connect('clicked', self.checkbut, 3)
+            self.w1.set_size_request(width=150,height=150)
+            self.w2.set_size_request(width=150,height=150)
+            self.w3.set_size_request(width=150,height=150)
+            self.w4.set_size_request(width=150,height=150)
+            self.toppbox = Gtk.CenterBox()
+            self.botppbox = Gtk.CenterBox()
+            self.botppbox.set_css_classes(['botppbox'])
+            self.ppbox.append(self.toppbox)
+            self.ppbox.append(self.botppbox)
+            self.tpbo = Gtk.Box()
+            self.tpbo.append(self.w1)
+            self.tpbo.append(self.w2)
+            self.toppbox.set_center_widget(self.tpbo)
+            self.btbo = Gtk.Box()
+            self.btbo.append(self.w3)
+            self.btbo.append(self.w4)
+            self.botppbox.set_center_widget(self.btbo)
+        else:
+            self.showkeys(menu='nextbox')
+        self.next = Gtk.Button(label="next")
+        self.next.set_css_classes(["but"])
+        self.ppbox.append(self.nextbox)
+        self.next.set_css_classes(['next'])
+        self.nextbox.append(self.next)
+        self.next.connect('clicked', self.play)
+        self.next.set_sensitive(False)
+
+    def lrevnumb(self, *args, **kwargs) -> None:
+        global wors, wor
+        wor = f"{random.randint(0,9)}"
+        self.mword = Gtk.Label(label=wor)
+        wor = translate(wor)
+        self.mword.set_css_classes(['word'])
+        self.ppbox.append(self.mword)
+        if not hard:
+            wors = []
+            for i in range(4):
+                hand = f"{translate(random.randint(0,9))}"
+                if hand in wors or hand == wor:
+                    hand = f"{translate(random.randint(0,9))}"
+                wors.append(hand)
+            wors[random.randint(0,3)] = wor
+            self.w1 = Gtk.Button(label=wors[0])
+            self.w1.set_css_classes(["but"])
+            self.w1.connect('clicked', self.checkbut, 0)
+            self.w2 = Gtk.Button(label=wors[1])
+            self.w2.set_css_classes(["but"])
+            self.w2.connect('clicked', self.checkbut, 1)
+            self.w3 = Gtk.Button(label=wors[2])
+            self.w3.set_css_classes(["but"])
+            self.w3.connect('clicked', self.checkbut, 2)
+            self.w4 = Gtk.Button(label=wors[3])
+            self.w4.set_css_classes(["but"])
+            self.w4.connect('clicked', self.checkbut, 3)
+            self.w1.set_size_request(width=150,height=150)
+            self.w2.set_size_request(width=150,height=150)
+            self.w3.set_size_request(width=150,height=150)
+            self.w4.set_size_request(width=150,height=150)
+            self.toppbox = Gtk.CenterBox()
+            self.botppbox = Gtk.CenterBox()
+            self.botppbox.set_css_classes(['botppbox'])
+            self.ppbox.append(self.toppbox)
+            self.ppbox.append(self.botppbox)
+            self.tpbo = Gtk.Box()
+            self.tpbo.append(self.w1)
+            self.tpbo.append(self.w2)
+            self.toppbox.set_center_widget(self.tpbo)
+            self.btbo = Gtk.Box()
+            self.btbo.append(self.w3)
+            self.btbo.append(self.w4)
+            self.botppbox.set_center_widget(self.btbo)
+        else:
+            self.showkeys(menu="nextbox")
+        self.next = Gtk.Button(label="next")
+        self.next.set_css_classes(["but"])
+        self.ppbox.append(self.nextbox)
+        self.next.set_css_classes(['next'])
+        self.nextbox.append(self.next)
+        self.next.connect('clicked', self.play)
+        self.next.set_sensitive(False)
+
     def checkbut(self, sus, val, *args, **kwargs):
         if wors[val] == wor:
             if mod == 'qchar':
@@ -767,6 +876,13 @@ class MainWindow(Gtk.ApplicationWindow):
                     exec(f"self.keyboard.append(self.kbox{box})")
                 if key in string.ascii_lowercase:
                     k +=1
+                    exec(f"self.key{key} = Gtk.Button(label=value)")
+                    exec(f"self.key{key}.set_css_classes(['but'])")
+                    exec(f"self.key{key}.connect('clicked', self.kentadd, value)")
+                    eval(f"self.kbox{box}.append(self.key{key})")
+                else:
+                    k +=1
+                    key = unicodedata.name(key).replace(" ", "").replace("-", "")
                     exec(f"self.key{key} = Gtk.Button(label=value)")
                     exec(f"self.key{key}.set_css_classes(['but'])")
                     exec(f"self.key{key}.connect('clicked', self.kentadd, value)")
