@@ -103,18 +103,31 @@ class MainWindow(Gtk.ApplicationWindow):
         self.reststreak = Gtk.Button(label='Reset Streak',hexpand=True)
         self.reststreak.set_css_classes(["but"])
         self.reststreak.connect('clicked', streakf, True)
-        self.showkeyboard = Gtk.Button(label='Show Keyboard',hexpand=True)
-        self.showkeyboard.set_css_classes(["but"])
-        self.showkeyboard.connect('clicked', self.showkeys, "optbox")
+        if typ == "lang":
+            self.showkeyboard = Gtk.Button(label='Show Keyboard',hexpand=True)
+            self.showkeyboard.set_css_classes(["but"])
+            self.showkeyboard.connect('clicked', self.showkeys, "optbox")
         self.setllen = Gtk.SpinButton()
         self.setllen.set_css_classes(["but"])
         self.setllen.set_range(5,999)
         self.setllen.set_increments(1,1)
         self.setllen.connect("changed", self.ssl)
-        self.hardmode = Gtk.Button(label="Hardmode")
+        self.hardmode = Gtk.Button()
+        self.hrdbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.hrdlab = Gtk.Label(label="Hardmode")
+        self.hrdonof = Gtk.Label(label=hard)
+        self.hrdbox.append(self.hrdlab)
+        self.hrdbox.append(self.hrdonof)
+        self.hardmode.set_child(self.hrdbox)
         self.hardmode.set_css_classes(["but"])
         self.hardmode.connect('clicked', self.hmode)
-        self.sound = Gtk.Button(label="Sounds")
+        self.sound = Gtk.Button()
+        self.sonbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.sonlab = Gtk.Label(label="Sounds")
+        self.sononof = Gtk.Label(label=sound)
+        self.sonbox.append(self.sonlab)
+        self.sonbox.append(self.sononof)
+        self.sound.set_child(self.sonbox)
         self.sound.set_css_classes(["but"])
         self.sound.connect('clicked', self.ssw)
         self.back = Gtk.Button(label='Back',hexpand=True)
@@ -125,7 +138,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.bbbot = Gtk.Box()
         self.opts.append(self.bbbot)
         self.tttop.append(self.reststreak)
-        self.tttop.append(self.showkeyboard)
+        if typ == "lang":
+            self.tttop.append(self.showkeyboard)
         self.tttop.append(self.setllen)
         self.bbbot.append(self.hardmode)
         self.bbbot.append(self.sound)
@@ -221,30 +235,28 @@ class MainWindow(Gtk.ApplicationWindow):
         global sound, conf
         if sound:
             sound = False
-            self.title.set_label("Sounds Off")
             conf.update({'sound': False})
             with open(path, "w") as f:
                 yaml.dump(conf,f, allow_unicode=True, sort_keys=False)
         else:
             sound = True
-            self.title.set_label("Sounds On")
             conf.update({'sound': True})
             with open(path, "w") as f:
                 yaml.dump(conf,f, allow_unicode=True, sort_keys=False)
+        self.opt()
     def hmode(self, *args, **kwargs):
         global hard, conf
         if hard:
             hard = False
-            self.title.set_label("Hardmode Off")
             conf.update({'hard': False})
             with open(path, "w") as f:
                 yaml.dump(conf,f, allow_unicode=True, sort_keys=False)
         else:
             hard = True
-            self.title.set_label("Hardmode On")
             conf.update({'hard': True})
             with open(path, "w") as f:
                 yaml.dump(conf,f, allow_unicode=True, sort_keys=False)
+        self.opt()
     def ssl(self, *args, **kwargs):
         global lessonLength, conf
         count = self.setllen.get_value_as_int()
@@ -285,7 +297,10 @@ class MainWindow(Gtk.ApplicationWindow):
                 self.exbox.append(self.ppbox)
                 modes = []
                 if typ == "lang":
-                    modes = ["lchoice", "lrevchoice", "lchar", "lrevchar", "lnumb", "lrevnumb"]
+                    if lern.get("1") != None:
+                        modes = ["lchoice", "lrevchoice", "lchar", "lrevchar", "lnumb", "lrevnumb"]
+                    else:
+                        modes = ["lchoice", "lrevchoice", "lchar", "lrevchar"]
                 if typ == "defs":
                     modes = ["dchoice", "drevchoice"]
                 if modes != []:
@@ -576,7 +591,7 @@ class MainWindow(Gtk.ApplicationWindow):
         if not hard:
             wors = []
             for i in range(4):
-                hand = random.choice(string.ascii_lower)
+                hand = random.choice(string.ascii_lowercase)
                 if hand in wors or hand == wor:
                     hand = random.choice(string.ascii_lowercase)
                 wors.append(hand)
@@ -975,7 +990,7 @@ class App(Adw.Application):
         self.win.present()
 def translate(word, side = "lern") -> str:
     if side == "lern":
-        return ''.join(lern.get(ch,ch) for ch in word)
+        return ''.join(lern.get(ch,ch) for ch in f"{word}")
     if side == "normal":
         for key, value in normdub.items():
             word = word.replace(key, value)
