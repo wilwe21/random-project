@@ -960,15 +960,15 @@ class MainWindow(Gtk.ApplicationWindow):
     def kentadd(self, obj, add, *args, **kwargs):
         current_text = self.txt.get_text()
         self.txt.set_text(current_text + add)
-        self.txt.grab_focus()
-        self.txt.select_region(-1,-1)
-        self.txt.set_position(len(current_text)+1)
+        #self.txt.grab_focus()
+        #self.txt.select_region(-1,-1)
+        #self.txt.set_position(len(current_text)+1)
     def kentback(self, *args, **kwargs):
         current_text = self.txt.get_text()
         self.txt.set_text(current_text[:-1])
-        self.txt.grab_focus()
-        self.txt.select_region(-1,-1)
-        self.txt.set_position(len(current_text)-1)
+        #self.txt.grab_focus()
+        #self.txt.select_region(-1,-1)
+        #self.txt.set_position(len(current_text)-1)
     def lifedel(self, obj = None, count = None, *args, **kwargs):
         global lives, ldat
         lives -= count
