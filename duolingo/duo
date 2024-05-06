@@ -26,6 +26,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.tbox = Gtk.CenterBox(hexpand=True)
         self.mainbox.append(self.tbox)
         self.title = Gtk.Label(label=logo,wrap=True,justify='center')
+        if not first:
+            streakf(obj = self, check = True)
         self.lives = Gtk.Label(label=f"{lives}🫀")
         self.streak = Gtk.Label(label=f"{streak} 󰈸")
         self.lives.set_css_classes(["lifes"])
@@ -1013,9 +1015,8 @@ def streakf(obj = None, rest: bool = False, check: bool = False) -> None:
     up = False
     if check:
         if sdata < time:
-            print(smem)
-            print("I'm at your door now")
-            conf.update({"streak": {"count": 0, "data": time}})
+            conf.update({"streak": {"count": 0, "data": time.strftime("%Y.%m.%d")}})
+            obj.title.set_text(smem)
             streak = 0
             up = True 
         elif sdata == time:
@@ -1127,8 +1128,6 @@ def main(prof: str = None) -> None:
         except:
             categories = {"poker": {"🂪🂫🂭🂮🂡": "Poker", "🂦🂥🂭🂣🂡": "Kolor", "🂣🂤🂥🂦🂧": "Strit w kolorze", "🂩🂺🂫🃍🃞": "Strit", "🂨🂸🂣🂤🂮": "Para", "🂮🂾🃞🃕🃒": "Trójka", "🂡🃑🂱🃁🂶": "Czwórka", "🂪🂺🃋🃛🃃": "Dwie pary", "🂨🂸🂾🃎🂮": "Full", "🂡🂵🃘🃉🂫": "Wysoka karta"}}
     w = wonderwords.RandomWord()
-    if not first:
-        streakf(check = True)
     koks = False
     app = App(application_id=f"io.github.wilwe.duo{profile}{random.randint(0,999999)}")
     app.run()
