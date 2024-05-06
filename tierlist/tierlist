@@ -3,7 +3,7 @@ import os, subprocess, argparse, random, yaml
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
-from gi.repository import Gtk, Gdk, Adw
+from gi.repository import Gtk, Gdk, Adw, GdkPixbuf
 from pathlib import Path
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
@@ -27,19 +27,26 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_child(self.mainbox)
         self.title = Gtk.Label(label="Title placecholder")
         self.mainbox.append(self.title)
-        self.tiers = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, vexpand=True, hexpand=True)
-        self.mainbox.append(self.tiers)
-        self.tiersnbox = Gtk.Label(label="S", hexpand=False)
-        self.tiers.append(self.tiersnbox)
-        self.tiersitems = Gtk.FlowBox(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True, vexpand=True, homogeneous=True)
-        self.tiers.append(self.tiersitems)
-        self.button = Gtk.Button(label="chuj")
-        self.button.connect('clicked', self.chuj)
-        self.mainbox.append(self.tiers)
-        self.mainbox.append(self.button)
-    def chuj(self, *args, **kwargs):
+        tiers = ["s", "a", "b", "c", "d", "f"]
+        for tier in tiers:
+            exec(f"self.tier{tier} = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)")
+            exec(f"self.mainbox.append(self.tier{tier})")
+            exec(f"self.tier{tier}nbox = Gtk.Label(label=tier, hexpand=False)")
+            exec(f"self.tier{tier}.append(self.tier{tier}nbox)")
+            exec(f"self.tier{tier}items = Gtk.FlowBox(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True, vexpand=True)")
+            exec(f"self.tier{tier}.append(self.tier{tier}items)")
+            exec(f"self.tier{tier}items.connect('child-activated', self.unselect, '{tier}')")
+            exec(f"self.mainbox.append(self.tier{tier})")
+        self.entry = Gtk.Entry()
+        self.entry.set_placeholder_text("Tiers")
+        self.entry.connect("activate", self.changetier)
+        self.mainbox.append(self.entry)
+    def unselect(self, obj, chuj, tier, *args, **kwargs):
+        exec(f"self.tier{tier}items.unselect_all()")
+    def changetier(self, *args, **kwargs):
+        tier = self.entry.get_text()
         self.chuj = Gtk.Label(label="chuj")
-        self.tiersitems.append(self.chuj)
+        exec(f"self.tier{tier}items.append(self.chuj)")
 class App(Adw.Application):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
