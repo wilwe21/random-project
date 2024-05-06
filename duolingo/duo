@@ -933,7 +933,14 @@ class MainWindow(Gtk.ApplicationWindow):
         if menu != None:
             men = menu
         if men == 'optbox':
-            print(self.txt.get_text())
+            susy = self.txt.get_text()
+            susynormal = translate(susy, "normal")
+            if susy == susynormal:
+                susynormal = translate(susy)
+            self.txt.set_text(susynormal)
+            self.txt.grab_focus()
+            self.txt.select_region(-1,-1)
+            self.txt.set_position(len(susynormal)+1)
         if men == 'nextbox':
             if self.txt.get_text() == wor:
                 if mod == 'qchar':
