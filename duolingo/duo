@@ -806,18 +806,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
     def checkbut(self, sus, val, *args, **kwargs):
         if wors[val] == wor:
-            if mod == 'qchar':
-                self.exppl(lvl+streak+5)
-            if mod == 'qrevchar':
-                self.exppl(lvl+streak+10)
-            if mod == 'qchoice':
-                self.exppl(lvl+streak+10)
-            if mod == 'qrevchoice':
-                self.exppl(lvl+streak+15)
-            if mod == "dchoice":
-                self.exppl(lvl+streak+10)
-            if mod == "drevchoice":
-                self.exppl(lvl+streak+10)
+            self.addpoint()
             self.title.set_label(f"Good {lesson}/{lessonLength}")
             self.title.set_css_classes(['good'])
             self.mword.add_css_class('good')
@@ -862,6 +851,27 @@ class MainWindow(Gtk.ApplicationWindow):
             self.setprog()
             with open(path, "w") as f:
                 yaml.dump(conf, f, allow_unicode=True, sort_keys=False)
+    def addpoint(self, *args, **kwargs):
+        if hard:
+            dup = 2
+        else:
+            dup = 1
+        if mod == 'lchar':
+            self.exppl(streak*dup+5+lvl)
+        if mod == 'lrevchar':
+            self.exppl(streak*dup+10+lvl)
+        if mod == 'lchoice':
+            self.exppl(streak*dup+10+lvl)
+        if mod == 'lrevchoice':
+            self.exppl(streak*dup+15+lvl)
+        if mod == 'lnumb':
+            self.exppl(streak*dup+5+lvl)
+        if mod == 'lrevnumb':
+            self.exppl(streak*dup+10+lvl)
+        if mod == "lchoice":
+            self.exppl(streak*dup+10+lvl)
+        if mod == "drevchoice":
+            self.exppl(streak*dup+15+lvl)
 
     def showkeys(self, iys = None, menu = None, *args, **kwargs):
         global koks, men
@@ -945,14 +955,7 @@ class MainWindow(Gtk.ApplicationWindow):
             self.txt.set_position(len(susynormal)+1)
         if men == 'nextbox':
             if self.txt.get_text() == wor:
-                if mod == 'qchar':
-                    self.exppl((lvl+streak+5)*2)
-                if mod == 'qrevchar':
-                    self.exppl((lvl+streak+10)*2)
-                if mod == 'qchoice':
-                    self.exppl((lvl+streak+10)*2)
-                if mod == 'qrevchoice':
-                    self.exppl((lvl+streak+15)*2)
+                self.addpoint()
                 self.title.set_label(f"Good {lesson}/{lessonLength}")
                 self.title.set_css_classes(['good'])
                 self.mword.add_css_class('good')
