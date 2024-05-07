@@ -3,7 +3,7 @@ import os, subprocess, argparse, random, yaml
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
-from gi.repository import Gtk, Gdk, Adw, GdkPixbuf
+from gi.repository import Gtk, Gdk, Adw
 from pathlib import Path
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
@@ -45,7 +45,7 @@ class MainWindow(Gtk.ApplicationWindow):
         exec(f"self.tier{tier}items.unselect_all()")
     def changetier(self, *args, **kwargs):
         tier = self.entry.get_text()
-        self.chuj = Gtk.Label(label="chuj")
+        self.chuj = Gtk.Image.new_from_file("/home/wilwe/Obrazy/Screenshots/tusk.png")
         exec(f"self.tier{tier}items.append(self.chuj)")
 class App(Adw.Application):
     def __init__(self, **kwargs):
