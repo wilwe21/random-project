@@ -33,19 +33,19 @@ class MainWindow(Gtk.ApplicationWindow):
             exec(f"self.mainbox.append(self.tier{tier})")
             exec(f"self.tier{tier}nbox = Gtk.Label(label=tier, hexpand=False)")
             exec(f"self.tier{tier}.append(self.tier{tier}nbox)")
-            exec(f"self.tier{tier}items = Gtk.FlowBox(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True, vexpand=True)")
+            exec(f"self.tier{tier}items = Gtk.FlowBox(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True)")
+            exec(f"self.tier{tier}items.set_selection_mode(False)")
+            exec(f"self.tier{tier}items.set_row_spacing(0)")
             exec(f"self.tier{tier}.append(self.tier{tier}items)")
-            exec(f"self.tier{tier}items.connect('child-activated', self.unselect, '{tier}')")
             exec(f"self.mainbox.append(self.tier{tier})")
         self.entry = Gtk.Entry()
         self.entry.set_placeholder_text("Tiers")
         self.entry.connect("activate", self.changetier)
         self.mainbox.append(self.entry)
-    def unselect(self, obj, chuj, tier, *args, **kwargs):
-        exec(f"self.tier{tier}items.unselect_all()")
     def changetier(self, *args, **kwargs):
         tier = self.entry.get_text()
         self.chuj = Gtk.Image.new_from_file("/home/wilwe/Obrazy/Screenshots/tusk.png")
+        self.chuj.set_size_request(100,100)
         exec(f"self.tier{tier}items.append(self.chuj)")
 class App(Adw.Application):
     def __init__(self, **kwargs):
