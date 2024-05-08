@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import platform
 import sys, os
 import gi
 gi.require_version('Gtk', '4.0')
@@ -8,7 +9,12 @@ import yaml, argparse, random, wonderwords, datetime, string, unicodedata
 from playsound import playsound
 from time import sleep
 from dateutil.relativedelta import relativedelta
-from pathlib import Path
+if platform.system() == "Linux":
+    print("Linux")
+    from pathlib import Path
+else:
+    print("Windows or smth nwm i don't use")
+    import userpath
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 css_provider = Gtk.CssProvider()
@@ -18,6 +24,7 @@ class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_size_request(1111, 690)
+        self.set_title(logo)
         self.menu()
     def menu(self, *args, **kwargs):
         livs()
@@ -25,7 +32,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_child(self.mainbox)
         self.tbox = Gtk.CenterBox(hexpand=True)
         self.mainbox.append(self.tbox)
-        self.title = Gtk.Label(label=logo,wrap=True,justify='center')
+        self.title = Gtk.Label(label=f"Welcome to {logo}",wrap=True,justify='center')
         if not first:
             streakf(obj = self, check = True)
         self.lives = Gtk.Label(label=f"{lives}🫀")
@@ -1078,10 +1085,16 @@ def main(prof: str = None) -> None:
     fire = 'gray'
     if prof == None:
         profile = "Braill"
-        path = f"{Path.home()}/.config/duobraill.yaml"
+        if platform.system() == "Linux":
+            path = f"{Path.home()}/.config/duobraill.yaml"
+        else:
+            path = f"{userpaths.get_my_documents()}/duo/duobraill.yaml"
     else:
         profile = prof.title()
-        path = f"{Path.home()}/.config/duo{prof.lower()}.yaml"
+        if platform.system() == "Linux":
+            path = f"{Path.home()}/.config/duo{prof.lower()}.yaml"
+        else:
+            path = f"{userpaths.get_my_documents()}/duo/duobraill.yaml"
     try:
         with open(path, "r") as f:
             conf = yaml.load(f, Loader=yaml.FullLoader)
@@ -1090,7 +1103,7 @@ def main(prof: str = None) -> None:
         sleep(2)
         first = True
         with open(path, "w+") as f:
-            conf = {"logo": "Welcome to duolingo for blind", "smem": "Your streak gone","streak": {"count": 0, "data": time.strftime("%Y.%m.%d")}, "type": "lang", "lvl": 0, "exp": 0, "hard": False, "sound": True, "lives": 5, "maxlives": 5, "ldat": ftime, "length": 5}
+            conf = {"logo": "duolingo for blind", "smem": "Your streak gone","streak": {"count": 0, "data": time.strftime("%Y.%m.%d")}, "type": "lang", "lvl": 0, "exp": 0, "hard": False, "sound": True, "lives": 5, "maxlives": 5, "ldat": ftime, "length": 5}
             yaml.dump(conf, f, allow_unicode=True, sort_keys=False)
     try:
         logo = conf["logo"]
@@ -1148,9 +1161,14 @@ if __name__ == "__main__":
         args.profile = ' '.join(args.profile)
     else:
         try:
-            with open(f"{Path.home()}/.config/duo.yaml", "r") as f:
-                mmmconf = yaml.load(f, Loader=yaml.FullLoader)
-            args.profile = mmmconf['profile']
+            if platform.system() == "Linux":
+                with open(f"{Path.home()}/.config/duo.yaml", "r") as f:
+                    mmmconf = yaml.load(f, Loader=yaml.FullLoader)
+                args.profile = mmmconf['profile']
+            else:
+                with open(f"{userpaths.get_my_documents()}/duo/duo.yaml", "r") as f:
+                    mmmconf = yaml.load(f, Loader=yaml.FullLoader)
+                args.profile = mmmconf['profile']
         except:
             pass
     main(args.profile)
