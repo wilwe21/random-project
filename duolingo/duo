@@ -1032,6 +1032,7 @@ def streakf(obj = None, rest: bool = False, check: bool = False) -> None:
         if sdata < time:
             conf.update({"streak": {"count": 0, "data": time.strftime("%Y.%m.%d")}})
             obj.title.set_text(smem)
+            playsound('streak.mp3')
             streak = 0
             up = True 
         elif sdata == time:
