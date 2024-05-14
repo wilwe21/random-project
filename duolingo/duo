@@ -15,6 +15,7 @@ if platform.system() == "Linux":
 else:
     print("Windows or smth nwm i don't use")
     import userpath
+back = False
 dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 css_provider = Gtk.CssProvider()
@@ -33,7 +34,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.tbox = Gtk.CenterBox(hexpand=True)
         self.mainbox.append(self.tbox)
         self.title = Gtk.Label(label=f"Welcome to {logo}",wrap=True,justify='center')
-        if not first:
+        if not first or back:
             streakf(obj = self, check = True)
         self.lives = Gtk.Label(label=f"{lives}🫀")
         self.streak = Gtk.Label(label=f"{streak} 󰈸")
@@ -291,7 +292,8 @@ class MainWindow(Gtk.ApplicationWindow):
         else:
             self.title.set_label("You don't have lifes")
     def play(self, *args, **kwargs):
-        global lesson, mod
+        global lesson, mod, fire, back
+        back = True
         if lives > 0:
             if lesson < lessonLength:
                 lesson +=1
@@ -333,6 +335,7 @@ class MainWindow(Gtk.ApplicationWindow):
                     self.ppbox.append(self.exitbuttonofsadness)
             elif lesson == lessonLength:
                 streakf()
+                fire = "orange"
                 self.menu()
         else:
             self.menu()
@@ -1039,24 +1042,23 @@ def streakf(obj = None, rest: bool = False, check: bool = False) -> None:
             fire = "gray"
         elif sdata > time:
             fire = "orange"
+    elif rest:
+        print("Streak reset")
+        ssts = time - relativedelta(days=1)
+        ssts = ssts.strftime("%Y.%m.%d")
+        conf.update({"streak": {"count": 0, "data": ssts}})
+        streak = 0
+        up = True
     else:
-        if rest:
-            print("Streak reset")
-            ssts = time - relativedelta(days=1)
+        nex = sdata + relativedelta(days=1)
+        if sdata < ftime:
+            ssts = time + relativedelta(days=1)
             ssts = ssts.strftime("%Y.%m.%d")
-            conf.update({"streak": {"count": 0, "data": ssts}})
-            streak = 0
+            fire = 'orange'
+            conf.update({"streak": {"count": streak+1, "data": ssts}})
+            streak += 1
             up = True
-        else:
-            nex = sdata + relativedelta(days=1)
-            if sdata < ftime:
-                ssts = time + relativedelta(days=1)
-                ssts = ssts.strftime("%Y.%m.%d")
-                fire = 'orange'
-                conf.update({"streak": {"count": streak+1, "data": ssts}})
-                streak += 1
-                up = True
-                print(f"Your streak raise: {streak}")
+            print(f"Your streak raise: {streak}")
     if up:
         with open(path, "w") as f:
             yaml.dump(conf,f, allow_unicode=True, sort_keys=False)
