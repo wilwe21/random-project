@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+import platform
+import sys, os
+import gi
+gi.require_version('Gtk', '4.0')
+gi.require_version('Adw', '1')
+from gi.repository import Gtk, Gdk, Adw
+import yaml, argparse, random, datetime, string
+if platform.system() == 'Linux':
+    print("Linux good")
+    from pathlib import Path
+else:
+    print("Windows or smth bad")
+    import userpath
+dir_path = os.path.dirname(os.path.realpath(__file__))
+os.chdir(dir_path)
+css_provider = Gtk.CssProvider()
+css_provider.load_from_path('style.css')
+Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+class App(Adw.Application):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.connect("activate", self.on_activate)
+    def on_activate(self,app):
+        self.win = MainWindow(application=app)
+        self.win.present()
+class MainWindow(Gtk.ApplicationWindow):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.set_title("Flex")
+        self.menu()
+    def menu(self, *args, **kwargs):
+        self.menubox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.set_child(self.menubox)
+        self.title = Gtk.Label(label="Flex Box Meter")
+        self.menubox.append(self.title)
+        for key, value in conf.items():
+            if any(ch not in string.ascii_letters for ch in key):
+                print(f"{key} is not properly saved")
+                continue
+            print(key)
+            exec(f"self.{key}box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)")
+            exec(f"self.{key}lab = Gtk.Label(label='{key}')")
+            exec(f"self.{key}box.append(self.{key}lab)")
+            exec(f"self.{key}flex = Gtk.Box()")
+            exec(f"self.{key}box.append(self.{key}flex)")
+            for k, v in value.items():
+                print(k,v)
+                exec(f"self.{key}val = Gtk.Label(label='{k} {v}|')")
+                exec(f"self.{key}flex.append(self.{key}val)")
+            exec(f"self.menubox.append(self.{key}box)")
+if __name__ == "__main__":
+    time = datetime.datetime.now().strftime("%Y.%m.%d")
+    if platform.system() == "Linux":
+        path = f"{Path.home()}/.config/flex.yaml"
+    else:
+        path = f"{userpaths.get_my_documents()}/flex.yaml"
+    try:
+        with open(path, "r") as f:
+            conf = yaml.load(f, Loader=yaml.FullLoader)
+        with open(path, "r") as f:
+            conf = yaml.load(f, Loader=yaml.FullLoader)
+    except FileNotFoundError:
+        print("No config file")
+        with open(path, 'w+') as f:
+            conf = {"example": {time: "1"}}
+            yaml.dump(conf, f, allow_unicode=True, sort_keys=False)
+    app = App(application_id="io.github.wilwe.flexmeter")
+    app.run()
