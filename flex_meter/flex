@@ -49,6 +49,21 @@ class MainWindow(Gtk.ApplicationWindow):
                 exec(f"self.{key}val = Gtk.Label(label='{k} {v}|')")
                 exec(f"self.{key}flex.append(self.{key}val)")
             exec(f"self.menubox.append(self.{key}box)")
+            exec(f"self.{key}but = Gtk.Button(label='Add')")
+            exec(f"self.{key}but.connect('clicked', self.add, key)")
+            exec(f"self.menubox.append(self.{key}but)")
+    def add(self, obj, key, *args, **kwargs):
+        try:
+            t = conf[key][time]+1
+            conf[key][time] = t
+            print(time, t+1)
+            with open(path, "w") as f:
+                yaml.dump(conf, f, allow_unicode=True, sort_keys=False)
+        except KeyError:
+            conf[key].update({time: 1})
+            print(time,"1")
+            with open(path, "w") as f:
+                yaml.dump(conf, f, allow_unicode=True, sort_keys=False)
 if __name__ == "__main__":
     time = datetime.datetime.now().strftime("%Y.%m.%d")
     if platform.system() == "Linux":
