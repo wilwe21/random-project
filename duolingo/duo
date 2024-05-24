@@ -122,6 +122,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.setllen = Gtk.SpinButton()
         self.setllen.set_css_classes(["but"])
         self.setllen.set_range(5,999)
+        self.setllen.set_value(lessonLength)
         self.setllen.set_increments(1,1)
         self.setllen.connect("changed", self.ssl)
         self.llenbox.append(self.llenlab)

@@ -32,18 +32,19 @@ lern:
   q: ᑑ
   r: ∷
   s: ᓭ
-  t: ℸ
+  t: 'ℸ ̣'
   u: ⚍
   v: ⍊
   w: ∴
-  x: ˙/
+  x: ' ̇/'
   y: '||'
   z: ⨅
 normal:
   dubles:
     '!¡': p
     '||': y
-    ˙/: x
+    ' ̇/': x
+    'ℸ ̣': t
   single:
     ʖ: b
     ᑑ: q
@@ -52,7 +53,6 @@ normal:
     ᓭ: s
     ᓵ: c
     ᔑ: a
-    ℸ: t
     ↸: d
     ∴: w
     ∷: r
